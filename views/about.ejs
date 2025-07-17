@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head', { title: 'About', pageType: 'content' }) %>
+<body>
+    <%- include('./partials/header') %>
+    <%- include('./partials/nav', { currentPage: 'about' }) %>
+    
+    <main class="main-content">
+        <div class="container">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>About Campus Sports Hub</h1>
+                    <p class="hero-subtitle">Connecting students through sports and recreation</p>
+                </div>
+            </section>
+            
+            <section class="content-section">
+                <div class="about-content">
+                    <h2>Our Mission</h2>
+                    <p>Campus Sports Hub is dedicated to fostering a vibrant sports community on campus. We provide a platform where students can discover, organize, and participate in various sporting events and activities.</p>
+                    
+                    <h2>What We Offer</h2>
+                    <ul>
+                        <li>Easy event discovery and registration</li>
+                        <li>Event creation tools for organizers</li>
+                        <li>Community building through sports</li>
+                        <li>Support for both competitive and recreational activities</li>
+                        <li>Indoor and outdoor event coordination</li>
+                    </ul>
+                    
+                    <h2>Get Involved</h2>
+                    <p>Whether you're looking to join existing events or create your own, Campus Sports Hub makes it easy to get involved in campus athletics. Browse our events, connect with other students, and stay active!</p>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <%- include('./partials/footer') %>
+</body>
+</html>

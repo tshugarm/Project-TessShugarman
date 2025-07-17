@@ -1,0 +1,412 @@
+/* Events Page Specific Styles */
+
+.main-content {
+    flex: 1;
+    min-height: 60vh;
+    padding: 2rem 0;
+}
+
+/* Category Sections */
+.category-section {
+    margin-bottom: 4rem;
+    animation: slideInUp 0.8s ease-out;
+}
+
+.category-title {
+    color: var(--white);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    position: relative;
+}
+
+.category-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(45deg, var(--warning-orange), var(--warning-orange-hover));
+    border-radius: var(--border-radius);
+}
+
+/* Sports Grid */
+.sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin: 0 2rem;
+    padding: 0 1rem;
+}
+
+/* Sport Cards */
+.sport-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-large);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-medium);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sport-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(14, 70, 26, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: var(--transition-slow);
+    opacity: 0;
+}
+
+.sport-card:hover::before {
+    opacity: 1;
+    transform: rotate(45deg) translate(50%, 50%);
+}
+
+.sport-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-heavy);
+}
+
+/* Sport Icons */
+.sport-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--primary-green), var(--primary-green-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.sport-card:hover .sport-icon {
+    transform: scale(1.1);
+}
+
+/* Sport Card Content */
+.sport-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark-gray);
+    position: relative;
+    z-index: 2;
+}
+
+.sport-card h3 a {
+    text-decoration: none;
+    color: var(--dark-gray);
+    transition: var(--transition);
+    position: relative;
+}
+
+.sport-card h3 a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-green);
+    transition: var(--transition);
+}
+
+.sport-card:hover h3 a::after {
+    width: 100%;
+}
+
+.sport-card:hover h3 a {
+    color: var(--primary-green);
+}
+
+.sport-card p {
+    color: var(--gray);
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+/* Event Info Section */
+.event-info {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.event-meta:last-child {
+    margin-bottom: 0;
+}
+
+.event-meta span:first-child {
+    font-weight: 500;
+}
+
+/* Event Actions */
+.event-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.edit-event-button, 
+.delete-event-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: var(--transition);
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-event-button::before,
+.delete-event-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: var(--transition-slow);
+}
+
+.edit-event-button:hover::before,
+.delete-event-button:hover::before {
+    left: 100%;
+}
+
+.edit-event-button {
+    background-color: var(--success-green);
+    color: var(--white);
+}
+
+.edit-event-button:hover {
+    background-color: var(--success-green-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.delete-event-button {
+    background-color: var(--danger-red);
+    color: var(--white);
+}
+
+.delete-event-button:hover {
+    background-color: var(--danger-red-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+}
+
+/* Event Detail Page Styles */
+.event-details {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-large);
+    padding: 3rem;
+    margin: 2rem auto;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-heavy);
+    animation: slideInUp 0.8s ease-out;
+}
+
+.event-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--primary-green);
+}
+
+.event-header h1 {
+    color: var(--primary-green);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.event-header p {
+    font-size: 1.1rem;
+    color: var(--gray);
+    line-height: 1.8;
+}
+
+.event-details h2 {
+    color: var(--primary-green);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-green);
+    padding-left: 1rem;
+}
+
+.event-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.event-details li {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-green);
+}
+
+.event-details strong {
+    color: var(--dark-gray);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+/* Filter and Search Section */
+.events-controls {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: var(--border-radius-large);
+    margin-bottom: 3rem;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-light);
+}
+
+.search-filter-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding-left: 2.5rem;
+}
+
+.search-box::before {
+    content: '🔍';
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.filter-select select {
+    min-width: 150px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--white);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.empty-state p {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sports-grid {
+        grid-template-columns: 1fr;
+        margin: 0 1rem;
+        padding: 0;
+    }
+    
+    .category-title {
+        font-size: 2rem;
+    }
+    
+    .event-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .edit-event-button,
+    .delete-event-button {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .event-details {
+        margin: 1rem;
+        padding: 2rem;
+    }
+    
+    .event-header h1 {
+        font-size: 2rem;
+    }
+    
+    .search-filter-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .filter-select select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .sport-card {
+        padding: 1.5rem;
+    }
+    
+    .sport-icon {
+        font-size: 3rem;
+    }
+    
+    .event-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .event-details {
+        padding: 1.5rem;
+    }
+    
+    .events-controls {
+        padding: 1rem;
+    }
+}

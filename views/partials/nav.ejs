@@ -1,0 +1,10 @@
+<nav class="main-nav">
+    <div class="container">
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a></li>
+            <li><a href="/events" class="nav-link <%= currentPage === 'events' ? 'active' : '' %>">Events</a></li>
+            <li><a href="/events/new" class="nav-link <%= currentPage === 'new-event' ? 'active' : '' %>">New Event</a></li>
+            <li><a href="/about" class="nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a></li>
+        </ul>
+    </div>
+</nav>

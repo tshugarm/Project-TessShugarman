@@ -1,0 +1,417 @@
+/* Content Pages Styles (About, Contact, Error) */
+
+.main-content {
+    flex: 1;
+    min-height: 60vh;
+    padding: 2rem 0;
+}
+
+/* Content Sections */
+.content-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-large);
+    padding: 3rem;
+    margin: 2rem 0;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-heavy);
+    animation: slideInUp 0.8s ease-out;
+}
+
+/* About Page Styles */
+.about-content h2 {
+    color: var(--primary-green);
+    margin-bottom: 1.5rem;
+    margin-top: 2.5rem;
+    font-size: 1.8rem;
+    border-left: 4px solid var(--primary-green);
+    padding-left: 1rem;
+    position: relative;
+}
+
+.about-content h2:first-child {
+    margin-top: 0;
+}
+
+.about-content h2::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 1rem;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-green);
+    border-radius: var(--border-radius);
+}
+
+.about-content p {
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+}
+
+.about-content ul {
+    margin-left: 2rem;
+    margin-bottom: 2rem;
+}
+
+.about-content li {
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+    font-size: 1.05rem;
+    color: var(--gray);
+    position: relative;
+}
+
+.about-content li::before {
+    content: '✓';
+    position: absolute;
+    left: -1.5rem;
+    color: var(--success-green);
+    font-weight: bold;
+}
+
+/* Contact Page Styles */
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.contact-info h2 {
+    color: var(--primary-green);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--primary-green);
+    padding-bottom: 0.5rem;
+}
+
+.contact-item {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-green);
+    transition: var(--transition);
+}
+
+.contact-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-light);
+}
+
+.contact-item h3 {
+    color: var(--primary-green);
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-item h3::before {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.contact-item h3[data-icon="email"]::before {
+    content: '\f0e0'; /* email icon */
+}
+
+.contact-item h3[data-icon="phone"]::before {
+    content: '\f095'; /* phone icon */
+}
+
+.contact-item h3[data-icon="clock"]::before {
+    content: '\f017'; /* clock icon */
+}
+
+.contact-item h3[data-icon="location"]::before {
+    content: '\f3c5'; /* map marker icon */
+}
+
+.contact-item p {
+    margin: 0;
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+/* Contact Form */
+.contact-form h2 {
+    color: var(--primary-green);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid var(--primary-green);
+    padding-bottom: 0.5rem;
+}
+
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--white);
+    font-family: inherit;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(14, 70, 26, 0.1);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form button {
+    background: linear-gradient(45deg, var(--primary-green), var(--primary-green-dark));
+    color: var(--white);
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-form button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: var(--transition-slow);
+}
+
+.contact-form button:hover::before {
+    left: 100%;
+}
+
+.contact-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 70, 26, 0.4);
+}
+
+/* Error Page Styles */
+.error-content {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-large);
+    padding: 4rem 2rem;
+    margin: 2rem 0;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-heavy);
+    animation: slideInUp 0.8s ease-out;
+}
+
+.error-details h2 {
+    color: var(--danger-red);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.error-details p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--gray);
+    line-height: 1.8;
+}
+
+.error-actions {
+    margin: 2rem 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.error-icon {
+    font-size: 4rem;
+    color: var(--danger-red);
+    margin-bottom: 2rem;
+}
+
+/* Error Stack (Development Mode) */
+.error-stack {
+    margin-top: 3rem;
+    text-align: left;
+    background: var(--light-gray);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--danger-red);
+    box-shadow: var(--shadow-light);
+}
+
+.error-stack h3 {
+    color: var(--danger-red);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.error-stack pre {
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    background: var(--white);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    border: 1px solid #ddd;
+}
+
+/* 404 Specific Styles */
+.error-404 {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+}
+
+.error-404 .error-icon::before {
+    content: '404';
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+/* Success Message Styles */
+.success-message {
+    background: rgba(212, 237, 218, 0.9);
+    color: var(--success-green);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--success-green);
+    font-weight: 500;
+}
+
+/* Map Container (if you want to add a map to contact page) */
+.map-container {
+    margin-top: 3rem;
+    height: 300px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+}
+
+/* Social Media Links */
+.social-links {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-link {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-green);
+    color: var(--white);
+    text-align: center;
+    line-height: 50px;
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+.social-link:hover {
+    background: var(--primary-green-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(14, 70, 26, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .content-section {
+        padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .about-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .contact-form h2,
+    .contact-info h2 {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .error-details h2 {
+        font-size: 1.5rem;
+    }
+    
+    .error-content {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-section {
+        padding: 1.5rem;
+    }
+    
+    .contact-item {
+        padding: 1rem;
+    }
+    
+    .about-content ul {
+        margin-left: 1rem;
+    }
+    
+    .error-icon {
+        font-size: 3rem;
+    }
+    
+    .error-stack {
+        padding: 1rem;
+    }
+    
+    .error-stack pre {
+        font-size: 0.8rem;
+        padding: 0.8rem;
+    }
+    
+    .social-links {
+        gap: 0.5rem;
+    }
+    
+    .social-link {
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+        font-size: 1rem;
+    }
+}

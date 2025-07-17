@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head', { title: 'Events', pageType: 'events' }) %>
+<body>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav', { currentPage: 'events' }) %>
+
+    <!-- Events by Category -->
+    <main class="main-content">
+        <div class="container">
+            <% categories.forEach(category => { %>
+                <section class="category-section">
+                    <h2 class="category-title"><%= category %> Events</h2>
+                    <div class="sports-grid">
+                        <% events.filter(event => event.category === category).forEach(event => { %>
+                            <div class="sport-card">
+                                <div class="sport-icon">
+                                    <% if (event.title.toLowerCase().includes('basketball')) { %>
+                                        <i class="fas fa-basketball-ball"></i>
+                                    <% } else if (event.title.toLowerCase().includes('football')) { %>
+                                        <i class="fas fa-football-ball"></i>
+                                    <% } else if (event.title.toLowerCase().includes('soccer')) { %>
+                                        <i class="fas fa-futbol"></i>
+                                    <% } else if (event.title.toLowerCase().includes('volleyball')) { %>
+                                        <i class="fas fa-volleyball-ball"></i>
+                                    <% } else if (event.title.toLowerCase().includes('tennis')) { %>
+                                        <i class="fas fa-table-tennis"></i>
+                                    <% } else if (event.title.toLowerCase().includes('track')) { %>
+                                        <i class="fas fa-running"></i>
+                                    <% } else { %>
+                                        <i class="fas fa-trophy"></i>
+                                    <% } %>
+                                </div>
+                                <h3><a href="/events/<%= event.id %>"><%= event.title %></a></h3>
+                                <p><%= event.details.substring(0, 100) %>...</p>
+                                <div class="event-info">
+                                    <div class="event-meta">
+                                        <span>Host: <%= event.host %></span>
+                                        <span class="status open">Open</span>
+                                    </div>
+                                    <div class="event-meta">
+                                        <span>Date: <%= new Date(event.startDateTime).toLocaleDateString() %></span>
+                                        <span>Time: <%= new Date(event.startDateTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </section>
+            <% }) %>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,34 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="/css/index.css"></head>
+<%- include('./partials/head', { title: 'Home', pageType: 'home' }) %>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.ejs" class="logo">
-                    <span>Campus Sports Hub</span>
-                </a>
-                <nav class="user-nav">
-                    <a href="#" class="nav-link">Log In</a>
-                    <a href="#" class="nav-link signup">Sign Up</a>
-                </nav>
-            </div>
-        </div>
-    </header>
-    <nav class="main-nav">
-        <div class="container">
-            <ul class="nav-menu">
-                <li><a href="index.ejs" class="nav-link active">Home</a></li>
-                <li><a href="events.ejs" class="nav-link">Events</a></li>
-                <li><a href="newEvent.ejs" class="nav-link">New Event</a></li>
-
-            </ul>
-        </div>
-    </nav>
+    <%- include('./partials/header') %>
+    <%- include('./partials/nav', { currentPage: 'home' }) %>
+    
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
@@ -37,23 +13,14 @@
                     <h1>Join the Action</h1>
                     <p class="hero-subtitle">Compete and Connect in our Campus Sports Events</p>
                     <div class="hero-buttons">
-                        <a href="events.ejs" class="btn btn-primary">Browse Sports</a>
-                        <a href="newEvent.ejs" class="btn btn-secondary">Create Event</a>
+                        <a href="/events" class="btn btn-primary">Browse Sports</a>
+                        <a href="/events/new" class="btn btn-secondary">Create Event</a>
                     </div>
                 </div>
             </section>
         </div>
     </main>
     
+    <%- include('./partials/footer') %>
 </body>
-<footer class="footer">
-    <div class="container">
-        <p>&copy; 2025 UNCC Sports Hub. All rights reserved.</p>
-        <ul>
-            <li><a href="#">Terms of Use</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Contact Us</a></li>
-        </ul>
-    </div>
-</footer>
 </html>

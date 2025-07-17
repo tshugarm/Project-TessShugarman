@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head', { title: 'Error', pageType: 'content' }) %>
+<body>
+    <%- include('./partials/header') %>
+    <%- include('./partials/nav', { currentPage: '' }) %>
+    
+    <main class="main-content">
+        <div class="container">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Oops! Something went wrong</h1>
+                    <p class="hero-subtitle">Error <%= error.status || 500 %></p>
+                </div>
+            </section>
+            
+            <section class="error-content">
+                <div class="error-details">
+                    <h2><%= message || 'An error occurred' %></h2>
+                    
+                    <% if (error.status === 404) { %>
+                        <p>The page you're looking for doesn't exist. It might have been moved, deleted, or you entered the wrong URL.</p>
+                        <div class="error-actions">
+                            <a href="/" class="btn btn-primary">Go Home</a>
+                            <a href="/events" class="btn btn-secondary">Browse Events</a>
+                        </div>
+                    <% } else { %>
+                        <p>We're sorry, but something went wrong on our end. Please try again later or contact support if the problem persists.</p>
+                        <div class="error-actions">
+                            <a href="/" class="btn btn-primary">Go Home</a>
+                            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+                        </div>
+                    <% } %>
+                    
+                    <% if (process.env.NODE_ENV === 'development' && error.stack) { %>
+                        <div class="error-stack">
+                            <h3>Error Details (Development Mode)</h3>
+                            <pre><%= error.stack %></pre>
+                        </div>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <%- include('./partials/footer') %>
+</body>
+</html>
