@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Events</title>
+    <link rel="stylesheet" href="/css/newEvent.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.ejs" class="logo">
+                    <span>Campus Sports Hub</span>
+                </a>
+                <nav class="user-nav">
+                    <a href="#" class="nav-link">Log In</a>
+                    <a href="#" class="nav-link signup">Sign Up</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="index.ejs" class="nav-link">Home</a></li>
+                <li><a href="events.ejs" class="nav-link">Events</a></li>
+                <li><a href="newEvent.ejs" class="nav-link active">New Event</a></li>
+
+            </ul>
+        </div>
+    </nav>
+    <form action="#" method="post" id="new-event-form">
+        <h2>Create New Event</h2>
+        <div class="form-group">
+            <label for="title">Event Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="">Select a category</option>
+                <option value="soccer">Soccer</option>
+                <option value="basketball">Basketball</option>
+                <option value="tennis">Tennis</option>
+                <option value="volleyball">Volleyball</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="start-date">Start Date and Time:</label>
+            <input type="datetime-local" id="start-date" name="start-date" required>
+        </div>
+        <div class="form-group">
+            <label for="end-date">End Date and Time:</label>
+            <input type="datetime-local" id="end-date" name="end-date" required>
+        </div>
+        <div class="form-group">
+            <label for="image">Event Image:</label>
+            <input type="file" id="image" name="image" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Event Description:</label>
+            <textarea id="description" name="description" required></textarea>
+        </div>
+        <button type="submit"><a href="#">Create Event</a></button>
+    </form>
+    
+</body>
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2025 UNCC Sports Hub. All rights reserved.</p>
+        <ul>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </div>
+</footer>
+</html>
