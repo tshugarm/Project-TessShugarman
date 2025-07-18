@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 
-// Array to store all events (mimicking a database)
+// Array to store all events
 const events = [
     {
         id: '1',

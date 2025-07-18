@@ -33,7 +33,7 @@ exports.create = (req, res) => {
             image: req.file ? `/images/${req.file.filename}` : '/images/default-event.jpg'
         };
 
-        // Basic validation
+        // validation
         if (!eventData.title || !eventData.category || !eventData.startDateTime || !eventData.endDateTime) {
             return res.status(400).render('error', {
                 message: 'Missing required fields',
