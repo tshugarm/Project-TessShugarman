@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const methodOverride = require('method-override');
 const multer = require('multer');
 const path = require('path');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -35,6 +36,12 @@ app.use(methodOverride('_method'));
 
 // Add multer middleware for file uploads on event routes
 app.use('/events', upload.single('image'));
+
+// MongoDB Connection
+const mongoURI = 'mongodb+srv://danielleff03:9tZXrhKqsi3Mn2S8@cluster0.zekhtoy.mongodb.net/NinerMaintenance?retryWrites=true&w=majority&appName=Cluster0';
+mongoose.connect(mongoURI, {})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 
 // Mount route modules
 app.use('/', mainRoutes);

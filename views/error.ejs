@@ -16,7 +16,7 @@
             
             <section class="error-content">
                 <div class="error-details">
-                    <h2><%= message || 'An error occurred' %></h2>
+                    <h2><%= error.message || 'An error occurred' %></h2>
                     
                     <% if (error.status === 404) { %>
                         <p>The page you're looking for doesn't exist. It might have been moved, deleted, or you entered the wrong URL.</p>

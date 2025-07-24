@@ -1,4 +1,4 @@
-const Event = require('../models/event');
+const Event = require('../models/old/event');
 
 // GET /events - Show all events sorted by category
 exports.index = (req, res) => {
