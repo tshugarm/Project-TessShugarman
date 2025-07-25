@@ -2,10 +2,10 @@ const Event = require('../models/Event');
 const mongoose = require('mongoose');
 
 // GET /events - Show all events sorted by category
-exports.index = (req, res) => {
+exports.index = async (req, res) => {
     try {
-        const events = Event.find();
-        const categories = Event.getCategories();
+        const events = await Event.find();
+        const categories = await Event.getCategories();
         res.render('events/index', { events, categories });
     } catch (error) {
         console.error(error);

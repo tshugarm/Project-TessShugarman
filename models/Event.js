@@ -78,8 +78,9 @@ eventSchema.pre('save', function(next) {
 
 const Event = mongoose.model('Event', eventSchema);
 
+
+// Debugging output
 console.log('Event model created successfully');
-console.log('Event methods available:', Object.getOwnPropertyNames(Event));
 console.log('Event.find:', typeof Event.find);
 console.log('Event.getCategories:', typeof Event.getCategories);
 
