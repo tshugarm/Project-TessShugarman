@@ -5,7 +5,7 @@
     <%- include('../partials/header') %>
     <%- include('../partials/nav', { currentPage: 'events' }) %>
 
-    <form action="/events/<%= event.id %>?_method=PUT" method="POST" enctype="multipart/form-data" id="new-event-form">
+    <form action="/events/<%= event._id %>?_method=PUT" method="POST" enctype="multipart/form-data" id="new-event-form">
         <h2>Edit Event</h2>
         
         <div class="form-group">
@@ -32,19 +32,19 @@
         
         <div class="form-group">
             <label for="startDateTime">Start Date and Time:</label>
-            <input type="datetime-local" id="startDateTime" name="startDateTime" value="<%= event.startDateTime %>" required>
+            <input type="datetime-local" id="startDateTime" name="startDateTime" value="<%= event.getFormattedStartDateTime() %>" required>
         </div>
         
         <div class="form-group">
             <label for="endDateTime">End Date and Time:</label>
-            <input type="datetime-local" id="endDateTime" name="endDateTime" value="<%= event.endDateTime %>" required>
+            <input type="datetime-local" id="endDateTime" name="endDateTime" value="<%= event.getFormattedEndDateTime() %>" required>
         </div>
         
         <div class="form-group">
-            <label for="image">Event Image (leave blank to keep current):</label>
+            <label for="image" class="optional">Event Image (leave blank to keep current):</label>
             <input type="file" id="image" name="image" accept="image/*">
             <% if (event.image) { %>
-                <p>Current image: <%= event.image %></p>
+                <div class="current-image">Current image: <%= event.image %></div>
             <% } %>
         </div>
         
@@ -53,8 +53,10 @@
             <textarea id="details" name="details" required><%= event.details %></textarea>
         </div>
         
-        <button type="submit">Update Event</button>
-        <a href="/events/<%= event.id %>" class="btn btn-secondary">Cancel</a>
+        <div class="form-actions">
+            <button type="submit">Update Event</button>
+            <a href="/events/<%= event._id %>" class="btn-cancel">Cancel</a>
+        </div>
     </form>
     
     <%- include('../partials/footer') %>

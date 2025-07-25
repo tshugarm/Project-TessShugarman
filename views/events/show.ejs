@@ -5,27 +5,45 @@
     <%- include('../partials/header') %>
     <%- include('../partials/nav', { currentPage: 'events' }) %>
 
-    <section class="event-details">
-        <section class="event-header">
-            <h1><%= event.title %></h1>
-            <p><%= event.details %></p>
-        </section>
-        
-        <h2>Event Details</h2>
-        <ul>
-            <li><strong>Category:</strong> <%= event.category %></li>
-            <li><strong>Host:</strong> <%= event.host %></li>
-            <li><strong>Start Date & Time:</strong> <%= new Date(event.startDateTime).toLocaleString() %></li>
-            <li><strong>End Date & Time:</strong> <%= new Date(event.endDateTime).toLocaleString() %></li>
-        </ul>
-        
-        <div class="event-actions">
-            <a href="/events/<%= event.id %>/edit" class="edit-event-button">Edit Event</a>
-            <form method="POST" action="/events/<%= event.id %>?_method=DELETE" style="display: inline;">
-                <button type="submit" class="delete-event-button" onclick="return confirm('Are you sure you want to delete this event?')">Delete Event</button>
-            </form>
+    <main class="main-content">
+        <div class="container">
+            <section class="event-details">
+                <section class="event-header">
+                    <h1><%= event.title %></h1>
+                    <p><%= event.details %></p>
+                </section>
+                
+                <h2>Event Details</h2>
+                <ul>
+                    <li><strong>Category:</strong> <%= event.category %></li>
+                    <li><strong>Host:</strong> <%= event.host %></li>
+                    <li><strong>Start Date & Time:</strong> <%= event.startDateTime.toLocaleString() %></li>
+                    <li><strong>End Date & Time:</strong> <%= event.endDateTime.toLocaleString() %></li>
+                    <% if (event.createdAt) { %>
+                        <li><strong>Created:</strong> <%= event.createdAt.toLocaleDateString() %></li>
+                    <% } %>
+                    <% if (event.updatedAt && event.updatedAt.getTime() !== event.createdAt.getTime()) { %>
+                        <li><strong>Last Updated:</strong> <%= event.updatedAt.toLocaleDateString() %></li>
+                    <% } %>
+                </ul>
+                
+                <% if (event.image && event.image !== '/images/default-event.jpg') { %>
+                    <div class="event-image">
+                        <h3>Event Image</h3>
+                        <img src="<%= event.image %>" alt="<%= event.title %>" style="max-width: 100%; height: auto; border-radius: 10px; margin-top: 1rem;">
+                    </div>
+                <% } %>
+                
+                <div class="event-actions">
+                    <a href="/events/<%= event._id %>/edit" class="edit-event-button">Edit Event</a>
+                    <form method="POST" action="/events/<%= event._id %>?_method=DELETE" style="display: inline;">
+                        <button type="submit" class="delete-event-button" onclick="return confirm('Are you sure you want to delete this event?')">Delete Event</button>
+                    </form>
+                    <a href="/events" class="btn btn-secondary" style="margin-left: 1rem;">Back to Events</a>
+                </div>
+            </section>
         </div>
-    </section>
+    </main>
 
     <%- include('../partials/footer') %>
 </body>

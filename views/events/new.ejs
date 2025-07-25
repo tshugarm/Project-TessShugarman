@@ -5,54 +5,60 @@
     <%- include('../partials/header') %>
     <%- include('../partials/nav', { currentPage: 'new-event' }) %>
 
-    <form action="/events" method="POST" enctype="multipart/form-data" id="new-event-form">
-        <h2>Create New Event</h2>
-        
-        <div class="form-group">
-            <label for="title">Event Title:</label>
-            <input type="text" id="title" name="title" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select id="category" name="category" required>
-                <option value="">Select a category</option>
-                <option value="Outdoor">Outdoor</option>
-                <option value="Indoor">Indoor</option>
-                <option value="Water Sports">Water Sports</option>
-                <option value="Winter Sports">Winter Sports</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="host">Host Name:</label>
-            <input type="text" id="host" name="host" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="startDateTime">Start Date and Time:</label>
-            <input type="datetime-local" id="startDateTime" name="startDateTime" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="endDateTime">End Date and Time:</label>
-            <input type="datetime-local" id="endDateTime" name="endDateTime" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="image">Event Image:</label>
-            <input type="file" id="image" name="image" accept="image/*">
-        </div>
-        
-        <div class="form-group">
-            <label for="details">Event Description:</label>
-            <textarea id="details" name="details" required></textarea>
-        </div>
-        
-        <button type="submit">Create Event</button>
-    </form>
+    <main class="main-content">
+        <form action="/events" method="POST" enctype="multipart/form-data" id="new-event-form">
+            <h2>Create New Event</h2>
+            
+            <div class="form-group">
+                <label for="title">Event Title:</label>
+                <input type="text" id="title" name="title" required placeholder="Enter event title">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Water Sports">Water Sports</option>
+                    <option value="Winter Sports">Winter Sports</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="host">Host Name:</label>
+                <input type="text" id="host" name="host" required placeholder="Enter host name">
+            </div>
+            
+            <div class="form-group">
+                <label for="startDateTime">Start Date and Time:</label>
+                <input type="datetime-local" id="startDateTime" name="startDateTime" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="endDateTime">End Date and Time:</label>
+                <input type="datetime-local" id="endDateTime" name="endDateTime" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="image" class="optional">Event Image:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+                <div class="file-help">Optional: Upload an image for your event</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="details">Event Description:</label>
+                <textarea id="details" name="details" required placeholder="Describe your event in detail..."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit">Create Event</button>
+                <a href="/events" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </main>
     
     <%- include('../partials/footer') %>
 </body>
-</html>
+</html>w
