@@ -17,6 +17,7 @@
                 <ul>
                     <li><strong>Category:</strong> <%= event.category %></li>
                     <li><strong>Host:</strong> <%= event.host %></li>
+                    <li><strong>Location:</strong> <%= event.location %></li>
                     <li><strong>Start Date & Time:</strong> <%= event.startDateTime.toLocaleString() %></li>
                     <li><strong>End Date & Time:</strong> <%= event.endDateTime.toLocaleString() %></li>
                     <% if (event.createdAt) { %>
@@ -26,7 +27,7 @@
                         <li><strong>Last Updated:</strong> <%= event.updatedAt.toLocaleDateString() %></li>
                     <% } %>
                 </ul>
-                
+               
                 <% if (event.image && event.image !== '/images/default-event.jpg') { %>
                     <div class="event-image">
                         <h3>Event Image</h3>

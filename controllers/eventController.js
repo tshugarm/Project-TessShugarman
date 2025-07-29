@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const User = require('../models/User');
 const mongoose = require('mongoose');
 
 // GET /events - Show all events sorted by category
@@ -28,6 +29,7 @@ exports.create = async (req, res) => {
             category: req.body.category,
             title: req.body.title,
             host: req.body.host,
+            location: req.body.location,
             startDateTime: req.body.startDateTime,
             endDateTime: req.body.endDateTime,
             details: req.body.details,
@@ -139,6 +141,7 @@ exports.update = async (req, res) => {
             category: req.body.category,
             title: req.body.title,
             host: req.body.host,
+            location: req.body.location,
             startDateTime: req.body.startDateTime,
             endDateTime: req.body.endDateTime,
             details: req.body.details

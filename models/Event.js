@@ -18,6 +18,12 @@ const eventSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    location: {
+        type: String,
+        required: true,
+        trim: true,
+        default: 'TBD' // Default location if not provided
+    },
     startDateTime: {
         type: Date,
         required: true
