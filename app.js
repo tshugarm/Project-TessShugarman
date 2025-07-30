@@ -37,9 +37,15 @@ app.use(express.urlencoded({extended: true}));
 app.use(morgan('tiny'));
 app.use(methodOverride('_method'));
 
+// MongoDB Connection
+const mongoURI = 'mongodb+srv://tshugarm:graduationpass@project3.sgfhcyv.mongodb.net/?retryWrites=true&w=majority&appName=project3';
+mongoose.connect(mongoURI, {})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
+
 // Session configuration
 app.use(session({
-    secret: 'your-secret-key-change-this-in-production',
+    secret: 'fourty-niners',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -59,12 +65,6 @@ app.use((req, res, next) => {
 
 // Add multer middleware for file uploads on event routes
 app.use('/events', upload.single('image'));
-
-// MongoDB Connection
-const mongoURI = 'mongodb+srv://tshugarm:graduationpass@project3.sgfhcyv.mongodb.net/?retryWrites=true&w=majority&appName=project3';
-mongoose.connect(mongoURI, {})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.error('MongoDB connection error:', err));
 
 // Mount route modules
 app.use('/', mainRoutes);

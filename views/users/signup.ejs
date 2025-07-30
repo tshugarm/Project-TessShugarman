@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head', { title: 'Login', pageType: 'forms' }) %>
+<body>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav', { currentPage: 'login' }) %>
+
+    <main class="main-content">
+        <form action="/users/signup" method="POST" id="new-event-form">
+            <h2>Create Your Account</h2>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" 
+                           value="<%= typeof formData !== 'undefined' ? formData.firstName || '' : '' %>" 
+                           required placeholder="Enter your first name">
+                    <div class="validation-message" id="firstName-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" 
+                           value="<%= typeof formData !== 'undefined' ? formData.lastName || '' : '' %>" 
+                           required placeholder="Enter your last name">
+                    <div class="validation-message" id="lastName-error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" 
+                       value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>" 
+                       required placeholder="Enter your email address">
+                <div class="validation-message" id="email-error"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" 
+                           required placeholder="Enter your password" minlength="6">
+                    <div class="validation-message" id="password-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" 
+                           required placeholder="Confirm your password" minlength="6">
+                    <div class="validation-message" id="confirmPassword-error"></div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit">Create Account</button>
+                <a href="/users/login" class="btn-cancel">Already have an account? Login</a>
+            </div>
+        </form>
+    </main>
+    
+    <script src="/javascript/signup-validation.js"></script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

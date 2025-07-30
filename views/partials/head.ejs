@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/components.css">
     
-    <!-- Page-specific styles -->
+     <!-- Page-specific styles -->
     <% if (pageType === 'home') { %>
         <link rel="stylesheet" href="/css/pages/index.css">
     <% } else if (pageType === 'events') { %>
@@ -19,5 +19,8 @@
         <link rel="stylesheet" href="/css/pages/forms.css">
     <% } else if (pageType === 'content') { %>
         <link rel="stylesheet" href="/css/pages/content.css">
+    <% } else if (pageType === 'profile') { %>
+        <link rel="stylesheet" href="/css/pages/content.css">
+        <link rel="stylesheet" href="/css/pages/profile.css">
     <% } %>
 </head>
