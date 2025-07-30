@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head', { title: 'Sign Up', pageType: 'forms' }) %>
+<body>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav', { currentPage: 'signup' }) %>
+
+    <main class="main-content">
+        <form action="/users/signup" method="POST" id="new-event-form">
+            <h2>Create Your Account</h2>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" 
+                           value="<%= typeof formData !== 'undefined' ? formData.firstName || '' : '' %>" 
+                           required placeholder="Enter your first name">
+                    <div class="validation-message" id="firstName-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" 
+                           value="<%= typeof formData !== 'undefined' ? formData.lastName || '' : '' %>" 
+                           required placeholder="Enter your last name">
+                    <div class="validation-message" id="lastName-error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" 
+                       value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>" 
+                       required placeholder="Enter your email address">
+                <div class="validation-message" id="email-error"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" 
+                           required placeholder="Enter your password" minlength="6">
+                    <div class="validation-message" id="password-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" 
+                           required placeholder="Confirm your password" minlength="6">
+                    <div class="validation-message" id="confirmPassword-error"></div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit">Create Account</button>
+                <a href="/users/login" class="btn-cancel">Already have an account? Login</a>
+            </div>
+        </form>
+    </main>
+    
+    <script>
+        // Client-side validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#new-event-form');
+            const firstName = document.querySelector('#firstName');
+            const lastName = document.querySelector('#lastName');
+            const email = document.querySelector('#email');
+            const password = document.querySelector('#password');
+            const confirmPassword = document.querySelector('#confirmPassword');
+            
+            // Real-time validation
+            firstName.addEventListener('blur', validateFirstName);
+            lastName.addEventListener('blur', validateLastName);
+            email.addEventListener('blur', validateEmail);
+            password.addEventListener('blur', validatePassword);
+            confirmPassword.addEventListener('blur', validateConfirmPassword);
+            
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                }
+            });
+            
+            function validateFirstName() {
+                const value = firstName.value.trim();
+                const errorDiv = document.querySelector('#firstName-error');
+                
+                if (value.length < 2) {
+                    showError(errorDiv, 'First name must be at least 2 characters long');
+                    return false;
+                } else if (value.length > 50) {
+                    showError(errorDiv, 'First name cannot exceed 50 characters');
+                    return false;
+                } else {
+                    showSuccess(errorDiv);
+                    return true;
+                }
+            }
+            
+            function validateLastName() {
+                const value = lastName.value.trim();
+                const errorDiv = document.querySelector('#lastName-error');
+                
+                if (value.length < 2) {
+                    showError(errorDiv, 'Last name must be at least 2 characters long');
+                    return false;
+                } else if (value.length > 50) {
+                    showError(errorDiv, 'Last name cannot exceed 50 characters');
+                    return false;
+                } else {
+                    showSuccess(errorDiv);
+                    return true;
+                }
+            }
+            
+            function validateEmail() {
+                const value = email.value.trim();
+                const errorDiv = document.querySelector('#email-error');
+                const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+                
+                if (!emailRegex.test(value)) {
+                    showError(errorDiv, 'Please enter a valid email address');
+                    return false;
+                } else {
+                    showSuccess(errorDiv);
+                    return true;
+                }
+            }
+            
+            function validatePassword() {
+                const value = password.value;
+                const errorDiv = document.querySelector('#password-error');
+                
+                if (value.length < 6) {
+                    showError(errorDiv, 'Password must be at least 6 characters long');
+                    return false;
+                } else {
+                    showSuccess(errorDiv);
+                    return true;
+                }
+            }
+            
+            function validateConfirmPassword() {
+                const value = confirmPassword.value;
+                const passwordValue = password.value;
+                const errorDiv = document.querySelector('#confirmPassword-error');
+                
+                if (value !== passwordValue) {
+                    showError(errorDiv, 'Passwords do not match');
+                    return false;
+                } else {
+                    showSuccess(errorDiv);
+                    return true;
+                }
+            }
+            
+            function validateForm() {
+                return validateFirstName() && 
+                       validateLastName() && 
+                       validateEmail() && 
+                       validatePassword() && 
+                       validateConfirmPassword();
+            }
+            
+            function showError(element, message) {
+                element.textContent = message;
+                element.className = 'validation-message error';
+            }
+            
+            function showSuccess(element) {
+                element.textContent = '';
+                element.className = 'validation-message';
+            }
+        });
+    </script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

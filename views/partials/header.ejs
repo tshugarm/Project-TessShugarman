@@ -5,8 +5,16 @@
                 <span>Campus Sports Hub</span>
             </a>
             <nav class="user-nav">
-                <a href="#" class="nav-link">Log In</a>
-                <a href="#" class="nav-link signup">Sign Up</a>
+                <% if (isLoggedIn) { %>
+                    <span class="nav-welcome">Hello, <%= user.firstName %>!</span>
+                    <a href="/users/profile" class="nav-link">Profile</a>
+                    <form action="/users/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="nav-link logout-btn">Logout</button>
+                    </form>
+                <% } else { %>
+                    <a href="/users/login" class="nav-link">Log In</a>
+                    <a href="/users/signup" class="nav-link signup">Sign Up</a>
+                <% } %>
             </nav>
         </div>
     </div>

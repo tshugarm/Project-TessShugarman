@@ -39,6 +39,11 @@ const eventSchema = new mongoose.Schema({
     image: {
         type: String,
         default: '/images/default-event.jpg'
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 }, {
     timestamps: true // Adds createdAt and updatedAt fields
@@ -83,11 +88,5 @@ eventSchema.pre('save', function(next) {
 });
 
 const Event = mongoose.model('Event', eventSchema);
-
-
-// Debugging output
-console.log('Event model created successfully');
-console.log('Event.find:', typeof Event.find);
-console.log('Event.getCategories:', typeof Event.getCategories);
 
 module.exports = Event;

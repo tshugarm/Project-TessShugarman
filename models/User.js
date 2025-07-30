@@ -30,24 +30,43 @@ const userSchema = new mongoose.Schema({
     timestamps: true // Adds createdAt and updatedAt fields
 });
 
-// hash the password
-userSchema.methods.generateHash = function(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+// Pre-save middleware to hash password
+userSchema.pre('save', async function(next) {
+    // Only hash the password if it has been modified (or is new)
+    if (!this.isModified('password')) return next();
+    
+    try {
+        const hashedPassword = await bcrypt.hash(this.password, 12);
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Instance method to check password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
 
-// checking if password is valid
-userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
+// Instance method to get full name
+userSchema.methods.getFullName = function() {
+    return `${this.firstName} ${this.lastName}`;
 };
 
-userSchema.methods.getFormattedStartDateTime = function() {
-    return this.startDateTime.toISOString().slice(0, 16);
-};
+userSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`;
+});
+userSchema.set('toJSON', {
+    virtuals: true
+});
 
-userSchema.methods.getFormattedEndDateTime = function() {
-    return this.endDateTime.toISOString().slice(0, 16);
-};
+const User = mongoose.model('User', userSchema);
 
-const userModel = mongoose.model("users", userSchema)
-module.exports = userModel;
+console.log('User model created successfully');
 
+module.exports = User;

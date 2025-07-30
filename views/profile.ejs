@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head', { title: 'Profile', pageType: 'content' }) %>
+<body>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav', { currentPage: 'profile' }) %>
+    
+    <main class="main-content">
+        <div class="container">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Welcome, <%= user.getFullName() %>!</h1>
+                    <p class="hero-subtitle">Manage your events and account</p>
+                </div>
+            </section>
+            
+            <section class="content-section">
+                <div class="profile-content">
+                    <div class="profile-info">
+                        <h2>Profile Information</h2>
+                        <div class="profile-details">
+                            <div class="profile-item">
+                                <strong>Name:</strong> <%= user.getFullName() %>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Email:</strong> <%= user.email %>
+                            </div>
+                            <div class="profile-item">
+                                <strong>Member Since:</strong> <%= user.createdAt.toLocaleDateString() %>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <form action="/users/logout" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="user-events">
+                        <h2>Your Events (<%= events.length %>)</h2>
+                        
+                        <% if (events.length > 0) { %>
+                            <div class="events-grid">
+                                <% events.forEach(event => { %>
+                                    <div class="event-card">
+                                        <div class="event-card-header">
+                                            <h3><a href="/events/<%= event._id %>"><%= event.title %></a></h3>
+                                            <span class="event-category"><%= event.category %></span>
+                                        </div>
+                                        
+                                        <div class="event-card-body">
+                                            <p class="event-description">
+                                                <%= event.details.length > 100 ? event.details.substring(0, 100) + '...' : event.details %>
+                                            </p>
+                                            
+                                            <div class="event-meta">
+                                                <div class="event-meta-item">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    <span><%= event.location %></span>
+                                                </div>
+                                                <div class="event-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span><%= event.startDateTime.toLocaleDateString() %></span>
+                                                </div>
+                                                <div class="event-meta-item">
+                                                    <i class="fas fa-clock"></i>
+                                                    <span><%= event.startDateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="event-card-actions">
+                                            <a href="/events/<%= event._id %>" class="btn btn-secondary">View</a>
+                                            <a href="/events/<%= event._id %>/edit" class="btn btn-success">Edit</a>
+                                            <form method="POST" action="/events/<%= event._id %>?_method=DELETE" 
+                                                  style="display: inline;" 
+                                                  onsubmit="return confirm('Are you sure you want to delete this event?')">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-events">
+                                <div class="empty-icon">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </div>
+                                <h3>No Events Yet</h3>
+                                <p>You haven't created any events yet. Start organizing your first event!</p>
+                                <a href="/events/new" class="btn btn-primary">Create Your First Event</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <style>
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .profile-info {
+            background: var(--light-gray);
+            padding: 2rem;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .profile-details {
+            margin-bottom: 2rem;
+        }
+        
+        .profile-item {
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+        
+        .events-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .event-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--primary-green);
+            transition: var(--transition);
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .event-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .event-card-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .event-card-header h3 a {
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+        
+        .event-category {
+            background: var(--primary-green);
+            color: var(--white);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .event-description {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .event-meta-item i {
+            color: var(--primary-green);
+            width: 16px;
+        }
+        
+        .event-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .event-card-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .empty-events {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--light-gray);
+            border-radius: var(--border-radius-large);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-events h3 {
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-events p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .event-meta {
+                grid-template-columns: 1fr;
+            }
+            
+            .event-card-actions {
+                flex-direction: column;
+            }
+            
+            .event-card-actions .btn {
+                flex: none;
+            }
+        }
+    </style>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>
