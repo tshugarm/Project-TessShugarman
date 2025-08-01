@@ -1,8 +1,6 @@
 const Event = require('../models/Event');
 const User = require('../models/User');
 const mongoose = require('mongoose');
-const { requireAuth, requireEventOwnership } = require('../middleware/auth');
-
 
 // GET /events - Show all events sorted by category
 exports.index = async (req, res) => {
@@ -19,12 +17,12 @@ exports.index = async (req, res) => {
     }
 };
 
-// GET /events/new - Show create event form
+// GET /events/new - Show create event form (AUTH REQUIRED)
 exports.new = (req, res) => {
     res.render('events/new');
 };
 
-// POST /events - Create new event
+// POST /events - Create new event (AUTH REQUIRED)
 exports.create = async (req, res) => {
     try {
         const eventData = {
@@ -43,6 +41,9 @@ exports.create = async (req, res) => {
         const newEvent = new Event(eventData);
         await newEvent.save();
         
+        // Add success flash message
+        req.flash.success(`Event "${newEvent.title}" has been created successfully!`);
+        
         res.redirect('/events');
     } catch (error) {
         console.error('Error creating event:', error);
@@ -50,16 +51,12 @@ exports.create = async (req, res) => {
         // validation errors
         if (error.name === 'ValidationError') {
             const errorMessages = Object.values(error.errors).map(err => err.message);
-            return res.status(400).render('error', {
-                message: `Validation Error: ${errorMessages.join(', ')}`,
-                error: { status: 400 }
-            });
+            req.flash.error(`Validation Error: ${errorMessages.join(', ')}`);
+            return res.redirect('/events/new');
         }
         
-        res.status(500).render('error', {
-            message: 'Error creating event',
-            error: error
-        });
+        req.flash.error('Error creating event. Please try again.');
+        res.redirect('/events/new');
     }
 };
 
@@ -100,6 +97,7 @@ exports.show = async (req, res) => {
     }
 };
 
+// GET /events/:id/edit - Show edit event form (OWNERSHIP REQUIRED)
 exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
@@ -122,7 +120,7 @@ exports.edit = async (req, res) => {
     }
 };
 
-// PUT /events/:id - Update event
+// PUT /events/:id - Update event (OWNERSHIP REQUIRED)
 exports.update = async (req, res) => {
     try {
         const id = req.params.id;
@@ -151,6 +149,9 @@ exports.update = async (req, res) => {
             }
         );
 
+        // Add success flash message
+        req.flash.success(`Event "${updatedEvent.title}" has been updated successfully!`);
+
         res.redirect(`/events/${id}`);
     } catch (error) {
         console.error('Error updating event:', error);
@@ -158,30 +159,31 @@ exports.update = async (req, res) => {
         // Handle validation errors
         if (error.name === 'ValidationError') {
             const errorMessages = Object.values(error.errors).map(err => err.message);
-            return res.status(400).render('error', {
-                message: `Validation Error: ${errorMessages.join(', ')}`,
-                error: { status: 400 }
-            });
+            req.flash.error(`Validation Error: ${errorMessages.join(', ')}`);
+            return res.redirect(`/events/${req.params.id}/edit`);
         }
         
-        res.status(500).render('error', {
-            message: 'Error updating event',
-            error: error
-        });
+        req.flash.error('Error updating event. Please try again.');
+        res.redirect(`/events/${req.params.id}/edit`);
     }
 };
 
-// DELETE /events/:id - Delete event (requires authentication and ownership)
+// DELETE /events/:id - Delete event (OWNERSHIP REQUIRED)
 exports.delete = async (req, res) => {
     try {
         const id = req.params.id;
+        const event = await Event.findById(id);
+        const eventTitle = event ? event.title : 'Event';
+        
         await Event.findByIdAndDelete(id);
+        
+        // Add success flash message
+        req.flash.success(`Event "${eventTitle}" has been deleted successfully.`);
+        
         res.redirect('/events');
     } catch (error) {
         console.error('Error deleting event:', error);
-        res.status(500).render('error', {
-            message: 'Error deleting event',
-            error: error
-        });
+        req.flash.error('Error deleting event. Please try again.');
+        res.redirect('/events');
     }
 };

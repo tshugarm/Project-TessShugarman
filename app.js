@@ -11,6 +11,7 @@ const app = express();
 
 // Import middleware
 const { populateUser } = require('./middleware/auth');
+const { popupMiddleware } = require('./middleware/popup');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -67,6 +68,7 @@ app.use((req, res, next) => {
 });
 
 // Global middleware to populate user data in all views
+app.use(popupMiddleware);    
 app.use(populateUser);
 
 // Add multer middleware for file uploads on event routes

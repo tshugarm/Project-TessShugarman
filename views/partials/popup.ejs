@@ -1,0 +1,43 @@
+><% if (typeof flash !== 'undefined' && flash) { %>
+    <div class="flash-messages">
+        <% if (flash.success) { %>
+            <div class="alert alert-success" id="flash-success">
+                <i class="fas fa-check-circle"></i>
+                <span><%= flash.success %></span>
+                <button type="button" class="flash-close" onclick="closeFlash('flash-success')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+        
+        <% if (flash.error) { %>
+            <div class="alert alert-error" id="flash-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span><%= flash.error %></span>
+                <button type="button" class="flash-close" onclick="closeFlash('flash-error')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+        
+        <% if (flash.warning) { %>
+            <div class="alert alert-warning" id="flash-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span><%= flash.warning %></span>
+                <button type="button" class="flash-close" onclick="closeFlash('flash-warning')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+        
+        <% if (flash.info) { %>
+            <div class="alert alert-info" id="flash-info">
+                <i class="fas fa-info-circle"></i>
+                <span><%= flash.info %></span>
+                <button type="button" class="flash-close" onclick="closeFlash('flash-info')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        <% } %>
+    </div>    
+<script src="/javascript/pop-ups.js"></script>

@@ -5,7 +5,8 @@
     <%- include('../partials/header') %>
     <%- include('../partials/nav', { currentPage: 'events' }) %>
 
-    <!-- Events by Category -->
+    <%- include('./partials/popup') %>
+
     <main class="main-content">
         <div class="container">
             <% if (categories && categories.length > 0) { %>

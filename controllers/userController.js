@@ -39,6 +39,9 @@ exports.create = async (req, res) => {
             email: newUser.email
         };
         
+        // Add success flash message
+        req.flash.success(`Welcome to Campus Sports Hub, ${newUser.firstName}! Your account has been created successfully.`);
+        
         res.redirect('/users/profile');
         
     } catch (error) {
@@ -102,6 +105,9 @@ exports.login = async (req, res) => {
             email: user.email
         };
         
+        // Add success flash message
+        req.flash.success(`Welcome back, ${user.firstName}! You have successfully logged in.`);
+        
         res.redirect('/users/profile');
         
     } catch (error) {
@@ -148,6 +154,9 @@ exports.profile = async (req, res) => {
 
 // POST /users/logout - Logout user
 exports.logout = (req, res) => {
+    // Get user name before killing session
+    const firstName = req.session.user ? req.session.user.firstName : 'User';
+    
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
@@ -156,6 +165,7 @@ exports.logout = (req, res) => {
                 error: err
             });
         }
-        res.redirect('/');
+        
+        res.redirect('/?logout=success');
     });
 };

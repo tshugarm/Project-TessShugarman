@@ -281,7 +281,7 @@
     color: #6c757d;
 }
 
-/* Alert Component */
+/* Alert & Flash Components */
 .alert {
     padding: 1rem;
     border-radius: var(--border-radius);
@@ -311,6 +311,86 @@
     background-color: #d1ecf1;
     border-color: #b8daff;
     color: #0c5460;
+}
+
+.flash-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.2rem;
+    margin-left: 1rem;
+    opacity: 0.7;
+    transition: var(--transition);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flash-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.flash-messages .alert-success {
+    background: rgba(212, 237, 218, 0.95);
+    border: 1px solid var(--success-green);
+    color: #155724;
+}
+
+.flash-messages .alert-error {
+    background: rgba(248, 215, 218, 0.95);
+    border: 1px solid var(--danger-red);
+    color: #721c24;
+}
+
+.flash-messages .alert-warning {
+    background: rgba(255, 243, 205, 0.95);
+    border: 1px solid var(--warning-orange);
+    color: #856404;
+}
+
+.flash-messages .alert-info {
+    background: rgba(209, 236, 241, 0.95);
+    border: 1px solid var(--accent-blue);
+    color: #0c5460;
+}
+
+/* Animation */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .flash-messages {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .flash-messages .alert {
+        min-width: auto;
+        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+    }
+}
+
+/* Fade out animation */
+.flash-messages .alert[style*="opacity: 0"] {
+    transform: translateX(100%);
+    transition: all 0.3s ease-out;
 }
 
 /* Loading Spinner */
