@@ -1,9 +1,11 @@
-><% if (typeof flash !== 'undefined' && flash) { %>
+<% if (typeof flash !== 'undefined' && flash) { %>
     <div class="flash-messages">
         <% if (flash.success) { %>
             <div class="alert alert-success" id="flash-success">
-                <i class="fas fa-check-circle"></i>
-                <span><%= flash.success %></span>
+                <div class="alert-content">
+                    <i class="fas fa-check-circle"></i>
+                    <span><%= flash.success %></span>
+                </div>
                 <button type="button" class="flash-close" onclick="closeFlash('flash-success')">
                     <i class="fas fa-times"></i>
                 </button>
@@ -12,8 +14,10 @@
         
         <% if (flash.error) { %>
             <div class="alert alert-error" id="flash-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <span><%= flash.error %></span>
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span><%= flash.error %></span>
+                </div>
                 <button type="button" class="flash-close" onclick="closeFlash('flash-error')">
                     <i class="fas fa-times"></i>
                 </button>
@@ -22,8 +26,10 @@
         
         <% if (flash.warning) { %>
             <div class="alert alert-warning" id="flash-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span><%= flash.warning %></span>
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><%= flash.warning %></span>
+                </div>
                 <button type="button" class="flash-close" onclick="closeFlash('flash-warning')">
                     <i class="fas fa-times"></i>
                 </button>
@@ -32,12 +38,15 @@
         
         <% if (flash.info) { %>
             <div class="alert alert-info" id="flash-info">
-                <i class="fas fa-info-circle"></i>
-                <span><%= flash.info %></span>
+                <div class="alert-content">
+                    <i class="fas fa-info-circle"></i>
+                    <span><%= flash.info %></span>
+                </div>
                 <button type="button" class="flash-close" onclick="closeFlash('flash-info')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
         <% } %>
     </div>    
+<% } %>
 <script src="/javascript/pop-ups.js"></script>

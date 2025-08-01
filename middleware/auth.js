@@ -1,22 +1,29 @@
 const User = require('../models/User');
 const Event = require('../models/Event');
 
-// Check if user is authenticated  (is)
+// Check if user is authenticated 
 const requireAuth = (req, res, next) => {
     if (!req.session.userId) {
-        return res.redirect('/users/login');
+        req.flash.error('You must be logged in to access this page.');
+        return req.session.save((err) => {
+            if (err) console.error('Session save error:', err);
+            res.redirect('/users/login');
+        });
     }
     next();
 };
 
-// Check if user is a guest (not authenticated)  
+// Check if user is a guest 
 const requireGuest = (req, res, next) => {
     if (req.session.userId) {
-        return res.redirect('/users/profile');
+        req.flash.warning('You are already logged in.');
+        return req.session.save((err) => {
+            if (err) console.error('Session save error:', err);
+            res.redirect('/users/profile');
+        });
     }
     next();
 };
-
 // Check if user owns the event   aka (isAuthor)
 const requireEventOwnership = async (req, res, next) => {
     try {
@@ -25,10 +32,8 @@ const requireEventOwnership = async (req, res, next) => {
 
         // First check if user is authenticated
         if (!userId) {
-            return res.status(401).render('error', {
-                message: 'Authentication required',
-                error: { status: 401 }
-            });
+            req.flash.error('You must be logged in to access this page.');
+            return res.redirect('/users/login');
         }
 
         // Find the event
@@ -42,10 +47,8 @@ const requireEventOwnership = async (req, res, next) => {
 
         // Check ownership
         if (event.createdBy.toString() !== userId.toString()) {
-            return res.status(403).render('error', {
-                message: 'You can only modify your own events',
-                error: { status: 403 }
-            });
+            req.flash.error('You can only modify your own events.');
+            return res.redirect('/events');
         }
 
         next();
