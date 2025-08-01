@@ -9,6 +9,9 @@ const MongoStore = require('connect-mongo');
 
 const app = express();
 
+// Import middleware
+const { populateUser } = require('./middleware/auth');
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -62,6 +65,9 @@ app.use((req, res, next) => {
     res.locals.isLoggedIn = !!req.session.userId;
     next();
 });
+
+// Global middleware to populate user data in all views
+app.use(populateUser);
 
 // Add multer middleware for file uploads on event routes
 app.use('/events', upload.single('image'));

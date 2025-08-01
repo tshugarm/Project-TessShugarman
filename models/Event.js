@@ -16,7 +16,7 @@ const eventSchema = new mongoose.Schema({
     host: {
         type: String,
         required: true,
-        trim: true
+        trim: true   
     },
     location: {
         type: String,
@@ -43,7 +43,7 @@ const eventSchema = new mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true    // Host ID
     }
 }, {
     timestamps: true // Adds createdAt and updatedAt fields

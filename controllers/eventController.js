@@ -1,19 +1,13 @@
 const Event = require('../models/Event');
 const User = require('../models/User');
 const mongoose = require('mongoose');
+const { requireAuth, requireEventOwnership } = require('../middleware/auth');
 
-// Middleware to check if user is authenticated
-const requireAuth = (req, res, next) => {
-    if (!req.session.userId) {
-        return res.redirect('/users/login');
-    }
-    next();
-};
 
 // GET /events - Show all events sorted by category
 exports.index = async (req, res) => {
     try {
-        const events = await Event.find();
+        const events = await Event.find().populate('createdBy', 'firstName lastName');
         const categories = await Event.getCategories();
         res.render('events/index', { events, categories });
     } catch (error) {
@@ -82,7 +76,7 @@ exports.show = async (req, res) => {
             });
         }
         
-        const event = await Event.findById(id);
+        const event = await Event.findById(id).populate('createdBy', 'firstName lastName');
         
         if (!event) {
             return res.status(404).render('error', {
@@ -106,33 +100,15 @@ exports.show = async (req, res) => {
     }
 };
 
-// GET /events/:id/edit - Show edit event form
-exports.edit = [requireAuth, async (req, res) => {
+exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
-        
-        // Validate MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-        
         const event = await Event.findById(id);
         
         if (!event) {
             return res.status(404).render('error', {
                 message: 'Event not found',
                 error: { status: 404 }
-            });
-        }
-
-        // Check if current user is the creator of the event
-        if (event.createdBy.toString() !== req.session.userId.toString()) {
-            return res.status(403).render('error', {
-                message: 'You can only edit your own events',
-                error: { status: 403 }
             });
         }
 
@@ -144,37 +120,12 @@ exports.edit = [requireAuth, async (req, res) => {
             error: error
         });
     }
-}];
+};
 
 // PUT /events/:id - Update event
-exports.update = [requireAuth, async (req, res) => {
+exports.update = async (req, res) => {
     try {
         const id = req.params.id;
-        
-        // Validate MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-        
-        const event = await Event.findById(id);
-        
-        if (!event) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-
-        // Check if current user is the creator of the event
-        if (event.createdBy.toString() !== req.session.userId.toString()) {
-            return res.status(403).render('error', {
-                message: 'You can only edit your own events',
-                error: { status: 403 }
-            });
-        }
         
         const updateData = {
             category: req.body.category,
@@ -218,38 +169,12 @@ exports.update = [requireAuth, async (req, res) => {
             error: error
         });
     }
-}];
+};
 
 // DELETE /events/:id - Delete event (requires authentication and ownership)
-exports.delete = [requireAuth, async (req, res) => {
+exports.delete = async (req, res) => {
     try {
         const id = req.params.id;
-        
-        // Validate MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-        
-        const event = await Event.findById(id);
-        
-        if (!event) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-
-        // Check if current user is the creator of the event
-        if (event.createdBy.toString() !== req.session.userId.toString()) {
-            return res.status(403).render('error', {
-                message: 'You can only delete your own events',
-                error: { status: 403 }
-            });
-        }
-
         await Event.findByIdAndDelete(id);
         res.redirect('/events');
     } catch (error) {
@@ -259,4 +184,4 @@ exports.delete = [requireAuth, async (req, res) => {
             error: error
         });
     }
-}];
+};

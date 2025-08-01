@@ -1,10 +1,25 @@
 <nav class="main-nav">
     <div class="container">
         <ul class="nav-menu">
-            <li><a href="/" class="nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a></li>
-            <li><a href="/events" class="nav-link <%= currentPage === 'events' ? 'active' : '' %>">Events</a></li>
-            <li><a href="/events/new" class="nav-link <%= currentPage === 'new-event' ? 'active' : '' %>">New Event</a></li>
-            <li><a href="/about" class="nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a></li>
+            <!-- Everyone sees Home and Events -->
+            <li><a href="/" class="nav-link <%= currentPage === 'home' ? 'active' : '' %>">
+                <i class="fas fa-home"></i> Home
+            </a></li>
+            <li><a href="/events" class="nav-link <%= currentPage === 'events' ? 'active' : '' %>">
+                <i class="fas fa-calendar-alt"></i> Events
+            </a></li>
+            
+            <% if (isLoggedIn) { %>
+                <!-- Authenticated users see: Create New Event -->
+                <li><a href="/events/new" class="nav-link <%= currentPage === 'new-event' ? 'active' : '' %>">
+                    <i class="fas fa-plus-circle"></i> Create Event
+                </a></li>
+            <% } %>
+            
+            <!-- Everyone sees About -->
+            <li><a href="/about" class="nav-link <%= currentPage === 'about' ? 'active' : '' %>">
+                <i class="fas fa-info-circle"></i> About
+            </a></li>
         </ul>
     </div>
 </nav>
