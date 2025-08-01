@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Event = require('../models/Event');
 
-// Check if user is authenticated
+// Check if user is authenticated  (is)
 const requireAuth = (req, res, next) => {
     if (!req.session.userId) {
         return res.redirect('/users/login');
@@ -9,7 +9,7 @@ const requireAuth = (req, res, next) => {
     next();
 };
 
-// Check if user is a guest (not authenticated)
+// Check if user is a guest (not authenticated)  
 const requireGuest = (req, res, next) => {
     if (req.session.userId) {
         return res.redirect('/users/profile');
@@ -17,7 +17,7 @@ const requireGuest = (req, res, next) => {
     next();
 };
 
-// Check if user owns the event
+// Check if user owns the event   aka (isAuthor)
 const requireEventOwnership = async (req, res, next) => {
     try {
         const eventId = req.params.id;
@@ -59,6 +59,7 @@ const requireEventOwnership = async (req, res, next) => {
 };
 
 // Populate user data for authenticated users
+// Validates ID
 const populateUser = async (req, res, next) => {
     if (req.session.userId) {
         try {
