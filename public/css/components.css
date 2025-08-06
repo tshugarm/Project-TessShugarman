@@ -450,9 +450,8 @@
 }
 
 /* RSVP Section Styling */
-/* RSVP Section Styling */
 .rsvp-section {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--light-gray);
     padding: 2rem;
     border-radius: var(--border-radius-large);
     margin: 2rem 0;
@@ -569,7 +568,7 @@
 
 /* Current RSVP Status */
 .current-rsvp {
-    color: var(--dark-gray);
+    color: var(--primary-green);
     font-size: 1rem;
     margin-top: 1rem;
     padding: 0.8rem;
