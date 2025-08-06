@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Event = require('../models/Event');
+const Rsvp = require('../models/Rsvp'); // Add RSVP import
 const mongoose = require('mongoose');
 
 // GET /users/signup - Show registration form
@@ -119,7 +120,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// GET /users/profile - Show user profile
+// GET /users/profile - Show user profile (UPDATED FOR RSVPs)
 exports.profile = async (req, res) => {
     try {
         // Check if user is logged in
@@ -138,9 +139,24 @@ exports.profile = async (req, res) => {
         const userEvents = await Event.find({ createdBy: req.session.userId })
             .sort({ createdAt: -1 });
         
+        // Get user's RSVPs with populated event details
+        const userRsvps = await Rsvp.find({ user: req.session.userId })
+            .populate({
+                path: 'event',
+                populate: {
+                    path: 'createdBy',
+                    select: 'firstName lastName'
+                }
+            })
+            .sort({ createdAt: -1 });
+        
+        // Filter out RSVPs where the event was deleted
+        const validRsvps = userRsvps.filter(rsvp => rsvp.event !== null);
+        
         res.render('users/profile', {
             user: user,
-            events: userEvents
+            events: userEvents,
+            rsvps: validRsvps
         });
         
     } catch (error) {

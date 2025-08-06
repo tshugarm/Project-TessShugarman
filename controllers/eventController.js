@@ -1,5 +1,6 @@
 const Event = require('../models/Event');
 const User = require('../models/User');
+const Rsvp = require('../models/Rsvp'); // Add RSVP import
 const mongoose = require('mongoose');
 
 // GET /events - Show all events sorted by category
@@ -60,7 +61,7 @@ exports.create = async (req, res) => {
     }
 };
 
-// GET /events/:id - Show specific event
+// GET /events/:id - Show specific event (UPDATED FOR RSVP)
 exports.show = async (req, res) => {
     try {
         const id = req.params.id;
@@ -87,13 +88,135 @@ exports.show = async (req, res) => {
                          event.createdBy && 
                          event.createdBy._id.toString() === req.session.userId.toString();
 
-        res.render('events/show', { event, isCreator });
+        // Get RSVP count for this event
+        const rsvpCount = await Rsvp.countRSVPs(id);
+
+        // Get current user's RSVP status if logged in and not creator
+        let userRsvp = null;
+        if (req.session.userId && !isCreator) {
+            userRsvp = await Rsvp.getRSVPsByUser(req.session.userId, id);
+        }
+
+        res.render('events/show', { 
+            event, 
+            isCreator, 
+            rsvpCount, 
+            userRsvp 
+        });
     } catch (error) {
         console.error('Error loading event:', error);
         res.status(500).render('error', {
             message: 'Error loading event',
             error: error
         });
+    }
+};
+
+// POST /events/:id/rsvp - Handle RSVP request
+exports.rsvp = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const userId = req.session.userId;
+        const status = req.body.status;
+
+        console.log('RSVP attempt:', { eventId, userId, status }); // Debug log
+
+        // Check if user is logged in
+        if (!userId) {
+            req.flash.error('You must be logged in to RSVP for events.');
+            return res.redirect('/users/login');
+        }
+
+        // Validate MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            return res.status(404).render('error', {
+                message: 'Invalid event ID',
+                error: { status: 404 }
+            });
+        }
+
+        // Validate event exists and get event details
+        const event = await Event.findById(eventId).populate('createdBy');
+        
+        if (!event) {
+            console.log('Event not found:', eventId); // Debug log
+            return res.status(404).render('error', {
+                message: 'Event not found',
+                error: { status: 404 }
+            });
+        }
+
+        console.log('Event found:', event.title, 'Creator:', event.createdBy); // Debug log
+
+        // Check if event has a creator (additional safety check)
+        if (!event.createdBy) {
+            console.error('Event has no creator:', eventId);
+            return res.status(500).render('error', {
+                message: 'Event data is corrupted - missing creator',
+                error: { status: 500 }
+            });
+        }
+
+        // Check if user is the host of the event
+        if (event.createdBy._id.toString() === userId.toString()) {
+            req.flash.error('You cannot RSVP for your own event.');
+            return res.redirect(`/events/${eventId}`);
+        }
+
+        // Validate status
+        if (!status || !['YES', 'NO', 'MAYBE'].includes(status.toUpperCase())) {
+            req.flash.error('Invalid RSVP status.');
+            return res.redirect(`/events/${eventId}`);
+        }
+
+        console.log('Creating/updating RSVP...'); // Debug log
+
+        // Use findOneAndUpdate to create or update RSVP
+        const rsvp = await Rsvp.findOneAndUpdate(
+            { user: userId, event: eventId },
+            { 
+                user: userId, 
+                event: eventId, 
+                status: status.toUpperCase() 
+            },
+            { 
+                new: true, 
+                upsert: true, // Create if doesn't exist
+                runValidators: true 
+            }
+        );
+
+        console.log('RSVP created/updated:', rsvp); // Debug log
+
+        // Set appropriate flash message
+        const statusMessages = {
+            'YES': 'going to',
+            'NO': 'not going to',
+            'MAYBE': 'might go to'
+        };
+        
+        req.flash.success(`You are now ${statusMessages[status.toUpperCase()]} "${event.title}".`);
+        
+        res.redirect(`/events/${eventId}`);
+
+    } catch (error) {
+        console.error('Error handling RSVP:', error);
+        
+        if (error.code === 11000) {
+            // Duplicate key error (shouldn't happen with findOneAndUpdate, but just in case)
+            req.flash.error('You have already RSVP\'d for this event.');
+        } else if (error.name === 'ValidationError') {
+            req.flash.error('Invalid RSVP data provided.');
+        } else {
+            req.flash.error('Error processing RSVP. Please try again.');
+        }
+        
+        // If we have a valid eventId, redirect there, otherwise to events list
+        if (req.params.id && mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.redirect(`/events/${req.params.id}`);
+        } else {
+            res.redirect('/events');
+        }
     }
 };
 
@@ -168,17 +291,21 @@ exports.update = async (req, res) => {
     }
 };
 
-// DELETE /events/:id - Delete event (OWNERSHIP REQUIRED)
+// DELETE /events/:id - Delete event (OWNERSHIP REQUIRED) - UPDATED FOR RSVP CLEANUP
 exports.delete = async (req, res) => {
     try {
         const id = req.params.id;
         const event = await Event.findById(id);
         const eventTitle = event ? event.title : 'Event';
         
+        // Delete all RSVPs associated with this event first
+        await Rsvp.deleteMany({ event: id });
+        
+        // Then delete the event
         await Event.findByIdAndDelete(id);
         
         // Add success flash message
-        req.flash.success(`Event "${eventTitle}" has been deleted successfully.`);
+        req.flash.success(`Event "${eventTitle}" and its associated RSVPs have been deleted successfully.`);
         
         res.redirect('/events');
     } catch (error) {

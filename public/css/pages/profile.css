@@ -28,6 +28,64 @@
     border-bottom: none;
 }
 
+/* Profile Stats */
+.profile-stats {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ddd;
+}
+
+.profile-stats h3 {
+    color: var(--primary-green);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: center;
+}
+
+.profile-stats .stat-item {
+    background: var(--white);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+}
+
+.profile-stats .stat-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary-green);
+    margin-bottom: 0.25rem;
+}
+
+.profile-stats .stat-label {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+/* Activity Sections */
+.user-activities {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.activity-section {
+    margin-bottom: 3rem;
+}
+
+.activity-section h2 {
+    color: var(--primary-green);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary-green);
+    padding-bottom: 0.5rem;
+}
+
 .events-grid {
     display: grid;
     gap: 1.5rem;
@@ -113,6 +171,101 @@
     min-width: 80px;
 }
 
+/* RSVP Grid and Cards */
+.rsvp-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.rsvp-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-light);
+    border-left: 4px solid var(--primary-green);
+    transition: var(--transition);
+}
+
+.rsvp-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.rsvp-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.rsvp-card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    flex: 1;
+}
+
+.rsvp-card-header h3 a {
+    color: var(--primary-green);
+    text-decoration: none;
+}
+
+.rsvp-card-header h3 a:hover {
+    text-decoration: underline;
+}
+
+.rsvp-status {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.rsvp-status.rsvp-yes {
+    background: var(--success-green);
+    color: var(--white);
+}
+
+.rsvp-status.rsvp-no {
+    background: var(--gray);
+    color: var(--white);
+}
+
+.rsvp-status.rsvp-maybe {
+    background: var(--warning-orange);
+    color: var(--white);
+}
+
+.rsvp-card-body {
+    margin-bottom: 1rem;
+}
+
+.rsvp-meta {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.rsvp-meta .text-muted {
+    color: var(--gray);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.rsvp-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.update-hint {
+    color: var(--gray);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Empty States */
 .empty-events {
     text-align: center;
     padding: 3rem 2rem;
@@ -136,22 +289,25 @@
     margin-bottom: 2rem;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .profile-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .event-meta {
-        grid-template-columns: 1fr;
-    }
-    
-    .event-card-actions {
-        flex-direction: column;
-    }
-    
-    .event-card-actions .btn {
-        flex: none;
-    }
+.empty-rsvps {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--light-gray);
+    border-radius: var(--border-radius-large);
+}
+
+.empty-rsvps .empty-icon {
+    font-size: 4rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+}
+
+.empty-rsvps h3 {
+    color: var(--dark-gray);
+    margin-bottom: 1rem;
+}
+
+.empty-rsvps p {
+    color: var(--gray);
+    margin-bottom: 2rem;
 }

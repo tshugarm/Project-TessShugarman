@@ -15,6 +15,9 @@ router.post('/', requireAuth, eventController.create);
 // GET /events/:id - Show specific event
 router.get('/:id', eventController.show);
 
+// GET /events/:id/rsvp - RSVP to an event
+router.post('/:id/rsvp', requireAuth, eventController.rsvp);
+
 // GET /events/:id/edit - Show edit event form
 router.get('/:id/edit', requireEventOwnership, eventController.edit);
 

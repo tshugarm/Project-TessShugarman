@@ -15,6 +15,54 @@
                     <p><%= event.details %></p>
                 </section>
                 
+                <!-- RSVP Section for Non-Creators -->
+                <% if (isLoggedIn && !isCreator) { %>
+                    <section class="rsvp-section">
+                        <h2>Will you attend this event?</h2>
+                        <div class="rsvp-buttons">
+                            <form method="POST" action="/events/<%= event._id %>/rsvp" style="display: inline;">
+                                <button type="submit" name="status" value="YES" 
+                                        class="btn-rsvp <%= userRsvp && userRsvp.status === 'YES' ? 'active' : '' %> rsvp-yes">
+                                    <i class="fas fa-thumbs-up"></i> Going
+                                </button>
+                            </form>
+                            <form method="POST" action="/events/<%= event._id %>/rsvp" style="display: inline;">
+                                <button type="submit" name="status" value="MAYBE" 
+                                        class="btn-rsvp <%= userRsvp && userRsvp.status === 'MAYBE' ? 'active' : '' %> rsvp-maybe">
+                                    <i class="fas fa-question"></i> Maybe
+                                </button>
+                            </form>
+                            <form method="POST" action="/events/<%= event._id %>/rsvp" style="display: inline;">
+                                <button type="submit" name="status" value="NO" 
+                                        class="btn-rsvp <%= userRsvp && userRsvp.status === 'NO' ? 'active' : '' %> rsvp-no">
+                                    <i class="fas fa-thumbs-down"></i> Not Going
+                                </button>
+                            </form>
+                        </div>
+                        <% if (userRsvp) { %>
+                            <p class="current-rsvp">
+                                Your current status: <strong><%= userRsvp.getStatus() %></strong>
+                            </p>
+                        <% } %>
+                    </section>
+                <% } else if (!isLoggedIn) { %>
+                    <section class="rsvp-section">
+                        <h2>Will you attend this event?</h2>
+                        <p class="login-prompt">
+                            <a href="/users/login" class="btn btn-primary">Login to RSVP</a>
+                        </p>
+                    </section>
+                <% } %>
+                
+                <!-- RSVP Count Display -->
+                <section class="rsvp-count">
+                    <h3>
+                        <i class="fas fa-users"></i> 
+                        <span class="count"><%= rsvpCount %></span> 
+                        <%= rsvpCount === 1 ? 'person is' : 'people are' %> going
+                    </h3>
+                </section>
+                
                 <h2>Event Details</h2>
                 <ul>
                     <li><strong>Category:</strong> <%= event.category %></li>
@@ -57,7 +105,7 @@
                             </a>
                             <form method="POST" action="/events/<%= event._id %>?_method=DELETE" 
                                   style="display: inline;" 
-                                  onsubmit="return confirm('Are you sure you want to delete this event?')">
+                                  onsubmit="return confirm('Are you sure you want to delete this event? All RSVPs will also be deleted.')">
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-trash"></i> Delete Event
                                 </button>
@@ -74,5 +122,3 @@
     </main>
 
     <%- include('../partials/footer') %>
-</body>
-</html>

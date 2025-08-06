@@ -448,3 +448,247 @@
         align-items: center;
     }
 }
+
+/* RSVP Section Styling */
+/* RSVP Section Styling */
+.rsvp-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: var(--border-radius-large);
+    margin: 2rem 0;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-medium);
+}
+
+.rsvp-section h2 {
+    color: var(--primary-green);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+/* RSVP Buttons Container */
+.rsvp-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+/* Individual RSVP Button Forms */
+.rsvp-buttons form {
+    display: inline-block;
+    margin: 0;
+}
+
+/* RSVP Button Styling */
+.btn-rsvp {
+    padding: 1rem 1.5rem;
+    border: 2px solid #ddd;
+    border-radius: var(--border-radius);
+    background: var(--white);
+    color: var(--dark-gray);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    font-size: 1rem;
+    font-family: inherit;
+    min-width: 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-rsvp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* RSVP Button States */
+.btn-rsvp.rsvp-yes {
+    border-color: var(--success-green);
+    color: var(--success-green);
+}
+
+.btn-rsvp.rsvp-yes:hover,
+.btn-rsvp.rsvp-yes.active {
+    background: var(--success-green);
+    border-color: var(--success-green);
+    color: var(--white);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-rsvp.rsvp-maybe {
+    border-color: var(--warning-orange);
+    color: var(--warning-orange);
+}
+
+.btn-rsvp.rsvp-maybe:hover,
+.btn-rsvp.rsvp-maybe.active {
+    background: var(--warning-orange);
+    border-color: var(--warning-orange);
+    color: var(--white);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.btn-rsvp.rsvp-no {
+    border-color: var(--gray);
+    color: var(--gray);
+}
+
+.btn-rsvp.rsvp-no:hover,
+.btn-rsvp.rsvp-no.active {
+    background: var(--gray);
+    border-color: var(--gray);
+    color: var(--white);
+    box-shadow: 0 5px 15px rgba(102, 102, 102, 0.4);
+}
+
+/* Button Icons */
+.btn-rsvp i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Active State Highlight */
+.btn-rsvp.active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-rsvp.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+/* Current RSVP Status */
+.current-rsvp {
+    color: var(--dark-gray);
+    font-size: 1rem;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-green);
+}
+
+.current-rsvp strong {
+    color: var(--primary-green);
+}
+
+/* Login Prompt for Guests */
+.login-prompt {
+    margin-top: 1rem;
+}
+
+.login-prompt .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* RSVP Count Display */
+.rsvp-count {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-large);
+    margin: 2rem 0;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid rgba(14, 70, 26, 0.1);
+}
+
+.rsvp-count h3 {
+    color: var(--primary-green);
+    font-size: 1.4rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.rsvp-count h3 i {
+    font-size: 1.5rem;
+    color: var(--primary-green);
+}
+
+.rsvp-count .count {
+    background: linear-gradient(45deg, var(--primary-green), var(--primary-green-dark));
+    color: var(--white);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-pill);
+    font-weight: bold;
+    min-width: 2.5rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(14, 70, 26, 0.3);
+}
+
+/* Responsive Design for RSVP */
+@media (max-width: 768px) {
+    .rsvp-section {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .rsvp-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .btn-rsvp {
+        width: 100%;
+        max-width: 250px;
+        padding: 1rem;
+    }
+    
+    .rsvp-count {
+        padding: 1.2rem;
+    }
+    
+    .rsvp-count h3 {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .current-rsvp {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .rsvp-section {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .rsvp-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .btn-rsvp {
+        font-size: 0.95rem;
+        padding: 0.9rem;
+        min-width: 120px;
+    }
+    
+    .btn-rsvp i {
+        font-size: 1rem;
+    }
+    
+    .rsvp-count {
+        margin: 1rem 0;
+    }
+    
+    .rsvp-count h3 {
+        font-size: 1.1rem;
+    }
+}
