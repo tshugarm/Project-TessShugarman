@@ -6,12 +6,48 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const app = express();
 
 // Import middleware
 const { populateUser } = require('./middleware/auth');
 const { popupMiddleware } = require('./middleware/popup');
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            fontSrc: ["'self'", "data:", "https:"],
+        },
+    },
+}));
+
+// Rate limiting for authentication routes
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, 
+    message: 'Too many authentication attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// General rate limiter
+const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, 
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply rate limiting
+app.use('/users/login', authLimiter);
+app.use('/users/signup', authLimiter);
+app.use(generalLimiter);
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -22,7 +58,19 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname)
     }
 });
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'), false);
+        }
+    }
+});
 
 // Import route modules
 const mainRoutes = require('./routes/mainRoutes');
@@ -56,7 +104,9 @@ app.use(session({
         mongoUrl: 'mongodb+srv://tshugarm:graduationpass@project3.sgfhcyv.mongodb.net/?retryWrites=true&w=majority&appName=project3'
     }),
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
     }
 }));
 

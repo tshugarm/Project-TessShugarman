@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 console.log('Loading Rsvp model...');
 
@@ -6,17 +7,26 @@ const rsvpSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'User ID is required']
     },
     event: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
-        required: true
+        required: [true, 'Event ID is required']
     },
     status: {
         type: String,
-        required: true,
-        enum: ['YES', 'NO', 'MAYBE'],
+        required: [true, 'RSVP status is required'],
+        enum: {
+            values: ['YES', 'NO', 'MAYBE'],
+            message: 'RSVP status must be YES, NO, or MAYBE'
+        },
+        validate: {
+            validator: function(value) {
+                return validator.isIn(value, ['YES', 'NO', 'MAYBE']);
+            },
+            message: 'Invalid RSVP status'
+        }
     }
 }, {
     timestamps: true

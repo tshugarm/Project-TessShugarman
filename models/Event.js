@@ -1,52 +1,107 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 console.log('Loading Event model...');
 
 const eventSchema = new mongoose.Schema({
     category: {
         type: String,
-        required: true,
-        enum: ['Outdoor', 'Indoor', 'Water Sports', 'Winter Sports', 'Other']
+        required: [true, 'Category is required'],
+        enum: {
+            values: ['Outdoor', 'Indoor', 'Water Sports', 'Winter Sports', 'Other'],
+            message: 'Category must be one of: Outdoor, Indoor, Water Sports, Winter Sports, Other'
+        },
+        validate: {
+            validator: function(value) {
+                return validator.isIn(value, ['Outdoor', 'Indoor', 'Water Sports', 'Winter Sports', 'Other']);
+            },
+            message: 'Invalid category selected'
+        }
     },
     title: {
         type: String,
-        required: true,
-        trim: true
+        required: [true, 'Title is required'],
+        trim: true,
+        minLength: [3, 'Title must be at least 3 characters'],
+        maxLength: [100, 'Title cannot exceed 100 characters'],
+        validate: {
+            validator: function(value) {
+                // Escape HTML to prevent XSS
+                return validator.escape(value) !== '';
+            },
+            message: 'Title contains invalid characters'
+        }
     },
     host: {
         type: String,
-        required: true,
-        trim: true   
+        required: [true, 'Host name is required'],
+        trim: true,
+        minLength: [2, 'Host name must be at least 2 characters'],
+        maxLength: [100, 'Host name cannot exceed 100 characters'] 
     },
     location: {
         type: String,
-        required: true,
+        required: [true, 'Location is required'],
         trim: true,
-        default: 'TBD' // Default location if not provided
+        minLength: [3, 'Location must be at least 3 characters'],
+        maxLength: [200, 'Location cannot exceed 200 characters'],
+        default: 'TBD'
     },
     startDateTime: {
         type: Date,
-        required: true
+        required: [true, 'Start date and time is required'],
+        validate: {
+            validator: function(value) {
+                // Check if it's a valid ISO 8601 date and after today
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return value >= today;
+            },
+            message: 'Start date must be today or in the future'
+        }
     },
     endDateTime: {
         type: Date,
-        required: true
+        required: [true, 'End date and time is required'],
+        validate: {
+            validator: function(value) {
+                // Check if it's a valid ISO 8601 date
+                if (!validator.isISO8601(value.toISOString())) {
+                    return false;
+                }
+                // Check if end date is after start date
+                return this.startDateTime && value > this.startDateTime;
+            },
+            message: 'End date must be after start date'
+        }
     },
     details: {
         type: String,
-        required: true
+        required: [true, 'Event details are required'],
+        trim: true,
+        minLength: [10, 'Details must be at least 10 characters'],
+        maxLength: [2000, 'Details cannot exceed 2000 characters']
     },
     image: {
         type: String,
-        default: '/images/default-event.jpg'
+        default: '/images/default-event.jpg',
+        validate: {
+            validator: function(value) {
+                // Allow default image or valid URL paths
+                return value === '/images/default-event.jpg' || 
+                       validator.isURL(value, { protocols: ['http', 'https'], require_protocol: false }) ||
+                       /^\/images\//.test(value);
+            },
+            message: 'Invalid image path'
+        }
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true    // Host ID
+        required: [true, 'Creator ID is required']
     }
 }, {
-    timestamps: true // Adds createdAt and updatedAt fields
+    timestamps: true 
 });
 
 // Instance method to format start date/time for form inputs

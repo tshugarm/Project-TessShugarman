@@ -8,17 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmPassword = document.querySelector('#confirmPassword');
     
     // Real-time validation
-    firstName.addEventListener('blur', validateFirstName);
-    lastName.addEventListener('blur', validateLastName);
-    email.addEventListener('blur', validateEmail);
-    password.addEventListener('blur', validatePassword);
-    confirmPassword.addEventListener('blur', validateConfirmPassword);
+    if (firstName) firstName.addEventListener('blur', validateFirstName);
+    if (lastName) lastName.addEventListener('blur', validateLastName);
+    if (email) email.addEventListener('blur', validateEmail);
+    if (password) password.addEventListener('blur', validatePassword);
+    if (confirmPassword) confirmPassword.addEventListener('blur', validateConfirmPassword);
     
-    form.addEventListener('submit', function(e) {
-        if (!validateForm()) {
-            e.preventDefault();
-        }
-    });
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+            }
+        });
+    }
     
     function validateFirstName() {
         const value = firstName.value.trim();
@@ -29,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         } else if (value.length > 50) {
             showError(errorDiv, 'First name cannot exceed 50 characters');
+            return false;
+        } else if (!/^[A-Za-z\s]+$/.test(value)) {
+            showError(errorDiv, 'First name can only contain letters');
             return false;
         } else {
             showSuccess(errorDiv);
@@ -46,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (value.length > 50) {
             showError(errorDiv, 'Last name cannot exceed 50 characters');
             return false;
+        } else if (!/^[A-Za-z\s]+$/.test(value)) {
+            showError(errorDiv, 'Last name can only contain letters');
+            return false;
         } else {
             showSuccess(errorDiv);
             return true;
@@ -55,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateEmail() {
         const value = email.value.trim();
         const errorDiv = document.querySelector('#email-error');
-        const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (!emailRegex.test(value)) {
             showError(errorDiv, 'Please enter a valid email address');
@@ -70,8 +78,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = password.value;
         const errorDiv = document.querySelector('#password-error');
         
-        if (value.length < 6) {
-            showError(errorDiv, 'Password must be at least 6 characters long');
+        if (value.length < 8) {
+            showError(errorDiv, 'Password must be at least 8 characters long');
+            return false;
+        } else if (value.length > 64) {
+            showError(errorDiv, 'Password cannot exceed 64 characters');
+            return false;
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+            showError(errorDiv, 'Password must contain at least one uppercase letter, one lowercase letter, and one number');
             return false;
         } else {
             showSuccess(errorDiv);
@@ -94,20 +108,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function validateForm() {
-        return validateFirstName() && 
-               validateLastName() && 
-               validateEmail() && 
-               validatePassword() && 
-               validateConfirmPassword();
+        const validations = [];
+        
+        if (firstName) validations.push(validateFirstName());
+        if (lastName) validations.push(validateLastName());
+        if (email) validations.push(validateEmail());
+        if (password) validations.push(validatePassword());
+        if (confirmPassword) validations.push(validateConfirmPassword());
+        
+        return validations.every(result => result === true);
     }
     
     function showError(element, message) {
-        element.textContent = message;
-        element.className = 'validation-message error';
+        if (element) {
+            element.textContent = message;
+            element.className = 'validation-message error';
+        }
     }
     
     function showSuccess(element) {
-        element.textContent = '';
-        element.className = 'validation-message';
+        if (element) {
+            element.textContent = '';
+            element.className = 'validation-message';
+        }
     }
 });

@@ -1,55 +1,91 @@
 const Event = require('../models/Event');
 const User = require('../models/User');
-const Rsvp = require('../models/Rsvp'); // Add RSVP import
+const Rsvp = require('../models/Rsvp');
 const mongoose = require('mongoose');
+const validator = require('validator');
 
-// GET /events - Show all events sorted by category
-exports.index = async (req, res) => {
-    try {
-        const events = await Event.find().populate('createdBy', 'firstName lastName');
-        const categories = await Event.getCategories();
-        res.render('events/index', { events, categories });
-    } catch (error) {
-        console.error(error);
-        res.status(500).render('error', { 
-            message: 'Error loading events',
-            error: error 
-        });
-    }
-};
-
-// GET /events/new - Show create event form (AUTH REQUIRED)
-exports.new = (req, res) => {
-    res.render('events/new');
-};
-
-// POST /events - Create new event (AUTH REQUIRED)
+// POST /events - Create new event (WITH VALIDATION)
 exports.create = async (req, res) => {
     try {
+        // Manual validation and sanitization
+        let { category, title, host, location, startDateTime, endDateTime, details } = req.body;
+        
+        // Sanitize inputs
+        title = validator.escape(validator.trim(title || ''));
+        host = validator.escape(validator.trim(host || ''));
+        location = validator.escape(validator.trim(location || ''));
+        details = validator.escape(validator.trim(details || ''));
+        
+        // Validation checks
+        const errors = [];
+        
+        if (!category || !validator.isIn(category, ['Outdoor', 'Indoor', 'Water Sports', 'Winter Sports', 'Other'])) {
+            errors.push('Please select a valid category');
+        }
+        
+        if (!title || title.length < 3 || title.length > 100) {
+            errors.push('Title must be between 3 and 100 characters');
+        }
+        
+        if (!host || host.length < 2 || host.length > 100) {
+            errors.push('Host name must be between 2 and 100 characters');
+        }
+        
+        if (!location || location.length < 3 || location.length > 200) {
+            errors.push('Location must be between 3 and 200 characters');
+        }
+        
+        if (!startDateTime || !validator.isISO8601(new Date(startDateTime).toISOString())) {
+            errors.push('Please provide a valid start date and time');
+        } else {
+            const startDate = new Date(startDateTime);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (startDate < today) {
+                errors.push('Start date must be today or in the future');
+            }
+        }
+        
+        if (!endDateTime || !validator.isISO8601(new Date(endDateTime).toISOString())) {
+            errors.push('Please provide a valid end date and time');
+        } else if (startDateTime) {
+            const startDate = new Date(startDateTime);
+            const endDate = new Date(endDateTime);
+            if (endDate <= startDate) {
+                errors.push('End date must be after start date');
+            }
+        }
+        
+        if (!details || details.length < 10 || details.length > 2000) {
+            errors.push('Details must be between 10 and 2000 characters');
+        }
+        
+        if (errors.length > 0) {
+            req.flash.error(errors.join(', '));
+            return res.redirect('/events/new');
+        }
+
         const eventData = {
-            category: req.body.category,
-            title: req.body.title,
-            host: req.body.host,
-            location: req.body.location,
-            startDateTime: req.body.startDateTime,
-            endDateTime: req.body.endDateTime,
-            details: req.body.details,
+            category,
+            title,
+            host,
+            location,
+            startDateTime: new Date(startDateTime),
+            endDateTime: new Date(endDateTime),
+            details,
             image: req.file ? `/images/${req.file.filename}` : '/images/default-event.jpg',
             createdBy: req.session.userId 
         };
 
-        // Create new event in database
         const newEvent = new Event(eventData);
         await newEvent.save();
         
-        // Add success flash message
         req.flash.success(`Event "${newEvent.title}" has been created successfully!`);
         
         res.redirect('/events');
     } catch (error) {
         console.error('Error creating event:', error);
         
-        // validation errors
         if (error.name === 'ValidationError') {
             const errorMessages = Object.values(error.errors).map(err => err.message);
             req.flash.error(`Validation Error: ${errorMessages.join(', ')}`);
@@ -61,65 +97,17 @@ exports.create = async (req, res) => {
     }
 };
 
-// GET /events/:id - Show specific event (UPDATED FOR RSVP)
-exports.show = async (req, res) => {
-    try {
-        const id = req.params.id;
-        
-        // Validate MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-        
-        const event = await Event.findById(id).populate('createdBy', 'firstName lastName');
-        
-        if (!event) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-
-        // Check if current user is the creator of the event
-        const isCreator = req.session.userId && 
-                         event.createdBy && 
-                         event.createdBy._id.toString() === req.session.userId.toString();
-
-        // Get RSVP count for this event
-        const rsvpCount = await Rsvp.countRSVPs(id);
-
-        // Get current user's RSVP status if logged in and not creator
-        let userRsvp = null;
-        if (req.session.userId && !isCreator) {
-            userRsvp = await Rsvp.getRSVPsByUser(req.session.userId, id);
-        }
-
-        res.render('events/show', { 
-            event, 
-            isCreator, 
-            rsvpCount, 
-            userRsvp 
-        });
-    } catch (error) {
-        console.error('Error loading event:', error);
-        res.status(500).render('error', {
-            message: 'Error loading event',
-            error: error
-        });
-    }
-};
-
-// POST /events/:id/rsvp - Handle RSVP request
+// POST /events/:id/rsvp - Handle RSVP request (WITH VALIDATION)
 exports.rsvp = async (req, res) => {
     try {
         const eventId = req.params.id;
         const userId = req.session.userId;
-        const status = req.body.status;
-
-        console.log('RSVP attempt:', { eventId, userId, status }); // Debug log
+        let { status } = req.body;
+        
+        // Sanitize and validate status
+        status = validator.trim(status || '').toUpperCase();
+        
+        console.log('RSVP attempt:', { eventId, userId, status });
 
         // Check if user is logged in
         if (!userId) {
@@ -135,20 +123,25 @@ exports.rsvp = async (req, res) => {
             });
         }
 
+        // Validate RSVP status
+        if (!validator.isIn(status, ['YES', 'NO', 'MAYBE'])) {
+            req.flash.error('Invalid RSVP status. Must be YES, NO, or MAYBE.');
+            return res.redirect(`/events/${eventId}`);
+        }
+
         // Validate event exists and get event details
         const event = await Event.findById(eventId).populate('createdBy');
         
         if (!event) {
-            console.log('Event not found:', eventId); // Debug log
+            console.log('Event not found:', eventId);
             return res.status(404).render('error', {
                 message: 'Event not found',
                 error: { status: 404 }
             });
         }
 
-        console.log('Event found:', event.title, 'Creator:', event.createdBy); // Debug log
+        console.log('Event found:', event.title, 'Creator:', event.createdBy);
 
-        // Check if event has a creator (additional safety check)
         if (!event.createdBy) {
             console.error('Event has no creator:', eventId);
             return res.status(500).render('error', {
@@ -163,13 +156,7 @@ exports.rsvp = async (req, res) => {
             return res.redirect(`/events/${eventId}`);
         }
 
-        // Validate status
-        if (!status || !['YES', 'NO', 'MAYBE'].includes(status.toUpperCase())) {
-            req.flash.error('Invalid RSVP status.');
-            return res.redirect(`/events/${eventId}`);
-        }
-
-        console.log('Creating/updating RSVP...'); // Debug log
+        console.log('Creating/updating RSVP...');
 
         // Use findOneAndUpdate to create or update RSVP
         const rsvp = await Rsvp.findOneAndUpdate(
@@ -177,16 +164,16 @@ exports.rsvp = async (req, res) => {
             { 
                 user: userId, 
                 event: eventId, 
-                status: status.toUpperCase() 
+                status: status 
             },
             { 
                 new: true, 
-                upsert: true, // Create if doesn't exist
+                upsert: true,
                 runValidators: true 
             }
         );
 
-        console.log('RSVP created/updated:', rsvp); // Debug log
+        console.log('RSVP created/updated:', rsvp);
 
         // Set appropriate flash message
         const statusMessages = {
@@ -195,7 +182,7 @@ exports.rsvp = async (req, res) => {
             'MAYBE': 'might go to'
         };
         
-        req.flash.success(`You are now ${statusMessages[status.toUpperCase()]} "${event.title}".`);
+        req.flash.success(`You are now ${statusMessages[status]} "${event.title}".`);
         
         res.redirect(`/events/${eventId}`);
 
@@ -203,7 +190,6 @@ exports.rsvp = async (req, res) => {
         console.error('Error handling RSVP:', error);
         
         if (error.code === 11000) {
-            // Duplicate key error (shouldn't happen with findOneAndUpdate, but just in case)
             req.flash.error('You have already RSVP\'d for this event.');
         } else if (error.name === 'ValidationError') {
             req.flash.error('Invalid RSVP data provided.');
@@ -211,7 +197,6 @@ exports.rsvp = async (req, res) => {
             req.flash.error('Error processing RSVP. Please try again.');
         }
         
-        // If we have a valid eventId, redirect there, otherwise to events list
         if (req.params.id && mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.redirect(`/events/${req.params.id}`);
         } else {
@@ -220,42 +205,77 @@ exports.rsvp = async (req, res) => {
     }
 };
 
-// GET /events/:id/edit - Show edit event form (OWNERSHIP REQUIRED)
-exports.edit = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const event = await Event.findById(id);
-        
-        if (!event) {
-            return res.status(404).render('error', {
-                message: 'Event not found',
-                error: { status: 404 }
-            });
-        }
-
-        res.render('events/edit', { event });
-    } catch (error) {
-        console.error('Error loading event for editing:', error);
-        res.status(500).render('error', {
-            message: 'Error loading event for editing',
-            error: error
-        });
-    }
-};
-
-// PUT /events/:id - Update event (OWNERSHIP REQUIRED)
+// PUT /events/:id - Update event (WITH VALIDATION)
 exports.update = async (req, res) => {
     try {
         const id = req.params.id;
         
+        // Manual validation and sanitization
+        let { category, title, host, location, startDateTime, endDateTime, details } = req.body;
+        
+        // Sanitize inputs
+        title = validator.escape(validator.trim(title || ''));
+        host = validator.escape(validator.trim(host || ''));
+        location = validator.escape(validator.trim(location || ''));
+        details = validator.escape(validator.trim(details || ''));
+        
+        // Validation checks
+        const errors = [];
+        
+        if (!category || !validator.isIn(category, ['Outdoor', 'Indoor', 'Water Sports', 'Winter Sports', 'Other'])) {
+            errors.push('Please select a valid category');
+        }
+        
+        if (!title || title.length < 3 || title.length > 100) {
+            errors.push('Title must be between 3 and 100 characters');
+        }
+        
+        if (!host || host.length < 2 || host.length > 100) {
+            errors.push('Host name must be between 2 and 100 characters');
+        }
+        
+        if (!location || location.length < 3 || location.length > 200) {
+            errors.push('Location must be between 3 and 200 characters');
+        }
+        
+        if (!startDateTime || !validator.isISO8601(new Date(startDateTime).toISOString())) {
+            errors.push('Please provide a valid start date and time');
+        } else {
+            const startDate = new Date(startDateTime);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (startDate < today) {
+                errors.push('Start date must be today or in the future');
+            }
+        }
+        
+        if (!endDateTime || !validator.isISO8601(new Date(endDateTime).toISOString())) {
+            errors.push('Please provide a valid end date and time');
+        } else if (startDateTime) {
+            const startDate = new Date(startDateTime);
+            const endDate = new Date(endDateTime);
+            if (endDate <= startDate) {
+                errors.push('End date must be after start date');
+            }
+        }
+        
+        if (!details || details.length < 10 || details.length > 2000) {
+            errors.push('Details must be between 10 and 2000 characters');
+        }
+        
+        if (errors.length > 0) {
+            req.flash.error(errors.join(', '));
+            return res.redirect(`/events/${id}/edit`);
+        }
+        
         const updateData = {
-            category: req.body.category,
-            title: req.body.title,
-            host: req.body.host,
-            location: req.body.location,
-            startDateTime: req.body.startDateTime,
-            endDateTime: req.body.endDateTime,
-            details: req.body.details
+            category,
+            title,
+            host,
+            location,
+            startDateTime: new Date(startDateTime),
+            endDateTime: new Date(endDateTime),
+            details
         };
 
         // Only update image if new one was uploaded
@@ -267,19 +287,17 @@ exports.update = async (req, res) => {
             id, 
             updateData, 
             { 
-                new: true, // Return updated document
-                runValidators: true // Run schema validations
+                new: true,
+                runValidators: true
             }
         );
 
-        // Add success flash message
         req.flash.success(`Event "${updatedEvent.title}" has been updated successfully!`);
 
         res.redirect(`/events/${id}`);
     } catch (error) {
         console.error('Error updating event:', error);
         
-        // Handle validation errors
         if (error.name === 'ValidationError') {
             const errorMessages = Object.values(error.errors).map(err => err.message);
             req.flash.error(`Validation Error: ${errorMessages.join(', ')}`);
@@ -288,29 +306,5 @@ exports.update = async (req, res) => {
         
         req.flash.error('Error updating event. Please try again.');
         res.redirect(`/events/${req.params.id}/edit`);
-    }
-};
-
-// DELETE /events/:id - Delete event (OWNERSHIP REQUIRED) - UPDATED FOR RSVP CLEANUP
-exports.delete = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const event = await Event.findById(id);
-        const eventTitle = event ? event.title : 'Event';
-        
-        // Delete all RSVPs associated with this event first
-        await Rsvp.deleteMany({ event: id });
-        
-        // Then delete the event
-        await Event.findByIdAndDelete(id);
-        
-        // Add success flash message
-        req.flash.success(`Event "${eventTitle}" and its associated RSVPs have been deleted successfully.`);
-        
-        res.redirect('/events');
-    } catch (error) {
-        console.error('Error deleting event:', error);
-        req.flash.error('Error deleting event. Please try again.');
-        res.redirect('/events');
     }
 };
