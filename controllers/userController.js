@@ -2,67 +2,26 @@ const User = require('../models/User');
 const Event = require('../models/Event');
 const Rsvp = require('../models/Rsvp');
 const mongoose = require('mongoose');
-const validator = require('validator');
 
 // GET /users/signup - Show registration form
 exports.new = (req, res) => {
     res.render('users/signup');
 };
 
-// POST /users/signup - Register new user 
+// POST /users/signup - Register new user
 exports.create = async (req, res) => {
     try {
-        // Manual validation and sanitization
-        let { firstName, lastName, email, password, confirmPassword } = req.body;
+        const { firstName, lastName, email, password, confirmPassword } = req.body;
         
-        // Trim and escape inputs
-        firstName = validator.escape(validator.trim(firstName || ''));
-        lastName = validator.escape(validator.trim(lastName || ''));
-        email = validator.normalizeEmail(validator.trim(email || ''));
-        
-        // Validation checks
-        const errors = [];
-        
-        if (!firstName || firstName.length < 2 || firstName.length > 50) {
-            errors.push('First name must be between 2 and 50 characters');
-        }
-        
-        if (!validator.isAlpha(firstName.replace(/\s/g, ''), 'en-US')) {
-            errors.push('First name can only contain letters');
-        }
-        
-        if (!lastName || lastName.length < 2 || lastName.length > 50) {
-            errors.push('Last name must be between 2 and 50 characters');
-        }
-        
-        if (!validator.isAlpha(lastName.replace(/\s/g, ''), 'en-US')) {
-            errors.push('Last name can only contain letters');
-        }
-        
-        if (!email || !validator.isEmail(email)) {
-            errors.push('Please provide a valid email address');
-        }
-        
-        if (!password || password.length < 8 || password.length > 64) {
-            errors.push('Password must be between 8 and 64 characters');
-        }
-        
-        if (password && !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-            errors.push('Password must contain at least one uppercase letter, one lowercase letter, and one number');
-        }
-        
+        // Check if passwords match (basic check since validation middleware handles the rest)
         if (password !== confirmPassword) {
-            errors.push('Passwords do not match');
-        }
-        
-        if (errors.length > 0) {
             return res.status(400).render('users/signup', {
-                error: errors.join(', '),
+                error: 'Passwords do not match',
                 formData: { firstName, lastName, email }
             });
         }
         
-        // Create new user with sanitized data
+        // Create new user
         const newUser = new User({
             firstName,
             lastName,
@@ -81,6 +40,7 @@ exports.create = async (req, res) => {
             email: newUser.email
         };
         
+        // Add success flash message
         req.flash.success(`Welcome to Campus Sports Hub, ${newUser.firstName}! Your account has been created successfully.`);
         
         res.redirect('/users/profile');
@@ -90,10 +50,13 @@ exports.create = async (req, res) => {
         
         let errorMessage = 'Error creating account';
         
+        // Handle validation errors
         if (error.name === 'ValidationError') {
             const errorMessages = Object.values(error.errors).map(err => err.message);
             errorMessage = errorMessages.join(', ');
-        } else if (error.code === 11000) {
+        }
+        // Handle duplicate email error
+        else if (error.code === 11000) {
             errorMessage = 'An account with this email already exists';
         }
         
@@ -104,31 +67,18 @@ exports.create = async (req, res) => {
     }
 };
 
-// POST /users/login - Authenticate user (WITH VALIDATION)
+// GET /users/login - Show login form
+exports.showLogin = (req, res) => {
+    res.render('users/login');
+};
+
+// POST /users/login - Authenticate user
 exports.login = async (req, res) => {
     try {
-        let { email, password } = req.body;
-        
-        // Sanitize inputs
-        email = validator.normalizeEmail(validator.trim(email || ''));
-        
-        // Validation
-        if (!email || !validator.isEmail(email)) {
-            return res.status(401).render('users/login', {
-                error: 'Please provide a valid email address',
-                formData: { email }
-            });
-        }
-        
-        if (!password) {
-            return res.status(401).render('users/login', {
-                error: 'Password is required',
-                formData: { email }
-            });
-        }
+        const { email, password } = req.body;
         
         // Find user by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
         
         if (!user) {
             return res.status(401).render('users/login', {
@@ -156,6 +106,7 @@ exports.login = async (req, res) => {
             email: user.email
         };
         
+        // Add success flash message
         req.flash.success(`Welcome back, ${user.firstName}! You have successfully logged in.`);
         
         res.redirect('/users/profile');
@@ -169,27 +120,26 @@ exports.login = async (req, res) => {
     }
 };
 
-// GET /users/login - Show login form
-exports.showLogin = (req, res) => {
-    res.render('users/login');
-};
-
 // GET /users/profile - Show user profile
 exports.profile = async (req, res) => {
     try {
+        // Check if user is logged in
         if (!req.session.userId) {
             return res.redirect('/users/login');
         }
         
+        // Get user details
         const user = await User.findById(req.session.userId);
         if (!user) {
             req.session.destroy();
             return res.redirect('/users/login');
         }
         
+        // Get user's events
         const userEvents = await Event.find({ createdBy: req.session.userId })
             .sort({ createdAt: -1 });
         
+        // Get user's RSVPs with populated event details
         const userRsvps = await Rsvp.find({ user: req.session.userId })
             .populate({
                 path: 'event',
@@ -200,6 +150,7 @@ exports.profile = async (req, res) => {
             })
             .sort({ createdAt: -1 });
         
+        // Filter out RSVPs where the event was deleted
         const validRsvps = userRsvps.filter(rsvp => rsvp.event !== null);
         
         res.render('users/profile', {
@@ -219,6 +170,7 @@ exports.profile = async (req, res) => {
 
 // POST /users/logout - Logout user
 exports.logout = (req, res) => {
+    // Get user name before killing session
     const firstName = req.session.user ? req.session.user.firstName : 'User';
     
     req.session.destroy((err) => {
